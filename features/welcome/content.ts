@@ -9,9 +9,9 @@ export const welcomeContent = {
   subheadline:
     'A calm, structured read on your pattern—built for people who care about performance and control.',
   bullets: [
-    'Stress regulation over willpower theater',
     'Pattern clarity in a few minutes',
     'No streaks, no shame—just a sharper baseline',
+    'Stress regulation protocols for renewed freedom',
   ],
   footerNote: 'Not medical advice. For awareness and behavior support only.',
 } as const;
