@@ -11,6 +11,7 @@ import {
 } from 'react-hook-form';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { AssessmentProgressRing } from '@/components/ui/AssessmentProgressRing';
 import { PrimaryButton } from '@/components/ui/PrimaryButton';
 import { Screen } from '@/components/ui/Screen';
 import { assessmentCopy, sectionTitles } from '@/features/onboarding/content/assessmentCopy';
@@ -22,10 +23,11 @@ import {
   type OnboardingAnswers,
 } from '@/features/onboarding/schema/onboardingAnswers';
 import {
-  getFirstIncompleteStep,
-  pickStepValues,
+  getAssessmentSequence,
+  getFirstIncompleteQuestionIndex,
+  getSectionForField,
+  validateCurrentField,
 } from '@/features/onboarding/schema/stepConfig';
-import { stepSchemas } from '@/features/onboarding/schema/stepSchemas';
 import { calculateScores } from '@/features/onboarding/scoring/calculateScores';
 import { AnalyticsEvents } from '@/lib/analytics/events';
 import { track } from '@/lib/analytics/track';
@@ -43,6 +45,14 @@ function applyZodErrors(setError: (name: FieldPath<OnboardingAnswers>, err: { me
   }
 }
 
+function setFieldErrorFromValidation(
+  setError: (name: FieldPath<OnboardingAnswers>, err: { message: string }) => void,
+  field: FieldPath<OnboardingAnswers>,
+  message: string,
+) {
+  setError(field, { message });
+}
+
 function OptionRadio({ selected, accent }: { selected: boolean; accent: string }) {
   return (
     <View style={[styles.radioOuter, { borderColor: accent }]}>
@@ -55,7 +65,7 @@ export function OnboardingAssessment() {
   const t = getTokens(useColorScheme());
   const router = useRouter();
   const { setSession } = useAssessment();
-  const [step, setStep] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
 
   const {
     control,
@@ -72,8 +82,10 @@ export function OnboardingAssessment() {
   const values = useWatch({ control }) as OnboardingDraftValues;
 
   const { clearDraft } = useAssessmentDraft(values, reset, (draft) => {
-    setStep(getFirstIncompleteStep(draft));
+    setQuestionIndex(getFirstIncompleteQuestionIndex(draft));
   });
+
+  const sequence = getAssessmentSequence(values);
 
   useEffect(() => {
     track(AnalyticsEvents.onboardingStarted);
@@ -85,19 +97,42 @@ export function OnboardingAssessment() {
     }
   }, [values.pastAttempts, setValue]);
 
+  useEffect(() => {
+    setQuestionIndex((qi) => {
+      if (sequence.length === 0) return 0;
+      return qi >= sequence.length ? sequence.length - 1 : qi;
+    });
+  }, [sequence.length]);
+
   const goNext = useCallback(async () => {
     clearErrors();
-    const slice = pickStepValues(step, getValues() as OnboardingDraftValues);
-    const parsed = stepSchemas[step].safeParse(slice);
-    if (!parsed.success) {
-      applyZodErrors(setError, parsed.error);
+    const draft = getValues() as OnboardingDraftValues;
+    const seq = getAssessmentSequence(draft);
+    const idx = Math.min(questionIndex, Math.max(0, seq.length - 1));
+    const currentField = seq[idx];
+    if (!currentField) {
       return;
     }
 
-    track(AnalyticsEvents.onboardingSectionCompleted, { sectionIndex: step });
+    const fieldResult = validateCurrentField(currentField, draft);
+    if (!fieldResult.success) {
+      const msg = fieldResult.error.issues[0]?.message ?? 'Invalid';
+      setFieldErrorFromValidation(setError, currentField, msg);
+      return;
+    }
 
-    if (step < stepSchemas.length - 1) {
-      setStep((s) => s + 1);
+    const currentSection = getSectionForField(currentField);
+    const isLastQuestion = idx >= seq.length - 1;
+    const nextField = !isLastQuestion ? seq[idx + 1] : undefined;
+    const nextSection = nextField !== undefined ? getSectionForField(nextField) : undefined;
+    const shouldTrackSectionComplete =
+      isLastQuestion || (nextSection !== undefined && nextSection !== currentSection);
+    if (shouldTrackSectionComplete) {
+      track(AnalyticsEvents.onboardingSectionCompleted, { sectionIndex: currentSection });
+    }
+
+    if (!isLastQuestion) {
+      setQuestionIndex(idx + 1);
       return;
     }
 
@@ -112,131 +147,144 @@ export function OnboardingAssessment() {
     await clearDraft();
     track(AnalyticsEvents.onboardingCompleted);
     router.replace('/results');
-  }, [clearDraft, clearErrors, getValues, router, setError, setSession, step]);
+  }, [clearDraft, clearErrors, getValues, questionIndex, router, setError, setSession]);
 
   const goBack = useCallback(() => {
     clearErrors();
-    if (step > 0) {
-      setStep((s) => s - 1);
+    if (questionIndex > 0) {
+      setQuestionIndex((i) => i - 1);
     } else {
       router.back();
     }
-  }, [clearErrors, router, step]);
+  }, [clearErrors, questionIndex, router]);
 
-  const progress = (step + 1) / stepSchemas.length;
+  const safeIdx = sequence.length === 0 ? 0 : Math.min(questionIndex, sequence.length - 1);
+  const currentField = sequence[safeIdx];
+  const sectionIndex = currentField !== undefined ? getSectionForField(currentField) : 0;
+  const progress = sequence.length > 0 ? (safeIdx + 1) / sequence.length : 0;
+
   return (
     <Screen scroll contentContainerStyle={styles.screen}>
-      <View style={styles.topRow}>
-        <Pressable onPress={goBack} hitSlop={12}>
+      <View style={styles.headerRow}>
+        <Pressable onPress={goBack} hitSlop={12} style={styles.headerBack}>
           <Text
             style={{
               color: t.color.textMuted,
               fontSize: 14,
               fontFamily: t.typeface.uiMedium,
             }}>
-            ← {step === 0 ? 'Exit' : 'Back'}
+            ← {questionIndex === 0 ? 'Exit' : 'Back'}
           </Text>
         </Pressable>
-        <Text
-          style={{
-            color: t.color.textMuted,
-            fontSize: 13,
-            letterSpacing: 1.1,
-            fontFamily: t.typeface.uiMedium,
-          }}>
-          {step + 1} / {stepSchemas.length}
-        </Text>
+        <View style={styles.headerCenter}>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={[
+              styles.sectionLabel,
+              {
+                color: t.color.accent,
+                fontFamily: t.typeface.uiSemibold,
+                textAlign: 'center',
+              },
+            ]}>
+            {sectionTitles[sectionIndex]}
+          </Text>
+        </View>
+        <View style={styles.headerRing}>
+          <AssessmentProgressRing
+            progress={progress}
+            trackColor={t.color.border}
+            textColor={t.color.textPrimary}
+            fontFamily={t.typeface.uiSemibold}
+            size={44}
+            strokeWidth={3}
+          />
+        </View>
       </View>
 
-      <View style={[styles.progressTrack, { backgroundColor: t.color.border }]}>
-        <View
-          style={[
-            styles.progressFill,
-            { width: `${progress * 100}%`, backgroundColor: t.color.accent },
-          ]}
+      {currentField === 'nicotineForms' ? (
+        <MultiField
+          control={control}
+          name="nicotineForms"
+          prompt={assessmentCopy.nicotineForms.prompt}
+          options={assessmentCopy.nicotineForms.options}
+          error={errors.nicotineForms?.message}
+          t={t}
         />
-      </View>
-
-      <Text style={[styles.sectionLabel, { color: t.color.accent, fontFamily: t.typeface.uiSemibold }]}>
-        {sectionTitles[step]}
-      </Text>
-
-      {step === 0 && (
+      ) : null}
+      {currentField === 'dailyUseEvents' ? (
+        <SingleField
+          control={control}
+          name="dailyUseEvents"
+          prompt={assessmentCopy.dailyUseEvents.prompt}
+          options={assessmentCopy.dailyUseEvents.options}
+          error={errors.dailyUseEvents?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'firstUseAfterWake' ? (
+        <SingleField
+          control={control}
+          name="firstUseAfterWake"
+          prompt={assessmentCopy.firstUseAfterWake.prompt}
+          options={assessmentCopy.firstUseAfterWake.options}
+          error={errors.firstUseAfterWake?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'urgeEnvironments' ? (
+        <MultiField
+          control={control}
+          name="urgeEnvironments"
+          prompt={assessmentCopy.urgeEnvironments.prompt}
+          options={assessmentCopy.urgeEnvironments.options}
+          error={errors.urgeEnvironments?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'emotionalPrecursor' ? (
+        <SingleField
+          control={control}
+          name="emotionalPrecursor"
+          prompt={assessmentCopy.emotionalPrecursor.prompt}
+          options={assessmentCopy.emotionalPrecursor.options}
+          error={errors.emotionalPrecursor?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'highStakesReliance' ? (
+        <SingleField
+          control={control}
+          name="highStakesReliance"
+          prompt={assessmentCopy.highStakesReliance.prompt}
+          options={assessmentCopy.highStakesReliance.options}
+          error={errors.highStakesReliance?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'performanceBelief' ? (
+        <SingleField
+          control={control}
+          name="performanceBelief"
+          prompt={assessmentCopy.performanceBelief.prompt}
+          options={assessmentCopy.performanceBelief.options}
+          error={errors.performanceBelief?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'reductionConcern' ? (
+        <SingleField
+          control={control}
+          name="reductionConcern"
+          prompt={assessmentCopy.reductionConcern.prompt}
+          options={assessmentCopy.reductionConcern.options}
+          error={errors.reductionConcern?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'selfImageConflict' ? (
         <>
-          <MultiField
-            control={control}
-            name="nicotineForms"
-            prompt={assessmentCopy.nicotineForms.prompt}
-            options={assessmentCopy.nicotineForms.options}
-            error={errors.nicotineForms?.message}
-            t={t}
-          />
-          <SingleField
-            control={control}
-            name="dailyUseEvents"
-            prompt={assessmentCopy.dailyUseEvents.prompt}
-            options={assessmentCopy.dailyUseEvents.options}
-            error={errors.dailyUseEvents?.message}
-            t={t}
-          />
-          <SingleField
-            control={control}
-            name="firstUseAfterWake"
-            prompt={assessmentCopy.firstUseAfterWake.prompt}
-            options={assessmentCopy.firstUseAfterWake.options}
-            error={errors.firstUseAfterWake?.message}
-            t={t}
-          />
-        </>
-      )}
-
-      {step === 1 && (
-        <>
-          <MultiField
-            control={control}
-            name="urgeEnvironments"
-            prompt={assessmentCopy.urgeEnvironments.prompt}
-            options={assessmentCopy.urgeEnvironments.options}
-            error={errors.urgeEnvironments?.message}
-            t={t}
-          />
-          <SingleField
-            control={control}
-            name="emotionalPrecursor"
-            prompt={assessmentCopy.emotionalPrecursor.prompt}
-            options={assessmentCopy.emotionalPrecursor.options}
-            error={errors.emotionalPrecursor?.message}
-            t={t}
-          />
-          <SingleField
-            control={control}
-            name="highStakesReliance"
-            prompt={assessmentCopy.highStakesReliance.prompt}
-            options={assessmentCopy.highStakesReliance.options}
-            error={errors.highStakesReliance?.message}
-            t={t}
-          />
-        </>
-      )}
-
-      {step === 2 && (
-        <>
-          <SingleField
-            control={control}
-            name="performanceBelief"
-            prompt={assessmentCopy.performanceBelief.prompt}
-            options={assessmentCopy.performanceBelief.options}
-            error={errors.performanceBelief?.message}
-            t={t}
-          />
-          <SingleField
-            control={control}
-            name="reductionConcern"
-            prompt={assessmentCopy.reductionConcern.prompt}
-            options={assessmentCopy.reductionConcern.options}
-            error={errors.reductionConcern?.message}
-            t={t}
-          />
           <Text style={[styles.prompt, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
             {assessmentCopy.selfImageConflict.prompt}
           </Text>
@@ -275,36 +323,28 @@ export function OnboardingAssessment() {
             <Text style={styles.err}>{errors.selfImageConflict.message}</Text>
           ) : null}
         </>
-      )}
-
-      {step === 3 && (
-        <>
-          <SingleField
-            control={control}
-            name="pastAttempts"
-            prompt={assessmentCopy.pastAttempts.prompt}
-            options={assessmentCopy.pastAttempts.options}
-            error={errors.pastAttempts?.message}
-            t={t}
-          />
-          {values.pastAttempts && values.pastAttempts !== '0' ? (
-            <SingleField
-              control={control}
-              name="crashReason"
-              prompt={assessmentCopy.crashReason.prompt}
-              options={assessmentCopy.crashReason.options}
-              error={errors.crashReason?.message}
-              t={t}
-            />
-          ) : values.pastAttempts === undefined ? (
-            <Text style={[styles.hint, { color: t.color.textMuted, fontFamily: t.typeface.ui }]}>
-              Choose past attempts first to unlock this question.
-            </Text>
-          ) : null}
-        </>
-      )}
-
-      {step === 4 && (
+      ) : null}
+      {currentField === 'pastAttempts' ? (
+        <SingleField
+          control={control}
+          name="pastAttempts"
+          prompt={assessmentCopy.pastAttempts.prompt}
+          options={assessmentCopy.pastAttempts.options}
+          error={errors.pastAttempts?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'crashReason' ? (
+        <SingleField
+          control={control}
+          name="crashReason"
+          prompt={assessmentCopy.crashReason.prompt}
+          options={assessmentCopy.crashReason.options}
+          error={errors.crashReason?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'sprintGoal' ? (
         <SingleField
           control={control}
           name="sprintGoal"
@@ -313,10 +353,10 @@ export function OnboardingAssessment() {
           error={errors.sprintGoal?.message}
           t={t}
         />
-      )}
+      ) : null}
 
       <PrimaryButton onPress={goNext}>
-        {step === 4 ? 'See results' : 'Continue'}
+        {sequence.length > 0 && safeIdx >= sequence.length - 1 ? 'See results' : 'Continue'}
       </PrimaryButton>
     </Screen>
   );
@@ -360,8 +400,8 @@ function MultiField({
                   <Pressable
                     key={opt.id}
                     onPress={() => toggle(opt.id)}
-                  accessibilityRole="checkbox"
-                  accessibilityState={{ checked: on }}
+                    accessibilityRole="checkbox"
+                    accessibilityState={{ checked: on }}
                     style={[
                       styles.option,
                       {
@@ -455,24 +495,30 @@ const styles = StyleSheet.create({
     maxWidth: 860,
     alignSelf: 'center',
   },
-  topRow: {
+  headerRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    width: '100%',
+    marginBottom: 4,
   },
-  progressTrack: {
-    height: 2,
-    borderRadius: 4,
-    overflow: 'hidden',
+  headerBack: {
+    flexShrink: 0,
   },
-  progressFill: {
-    height: '100%',
+  headerCenter: {
+    flex: 1,
+    minWidth: 0,
+    paddingHorizontal: 8,
+    justifyContent: 'center',
+  },
+  headerRing: {
+    flexShrink: 0,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
   },
   sectionLabel: {
     fontSize: 12,
     letterSpacing: 1.1,
     textTransform: 'uppercase',
-    marginBottom: 4,
   },
   block: { gap: 10, marginBottom: 8 },
   prompt: { fontSize: 36, lineHeight: 44, marginBottom: 8 },

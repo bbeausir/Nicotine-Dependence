@@ -1,6 +1,7 @@
-import { z } from 'zod';
+import { z, type ZodError } from 'zod';
 
 import {
+  crashReasonIds,
   onboardingAnswersObjectSchema,
   type OnboardingAnswers,
   type OnboardingDraftValues,
@@ -79,4 +80,89 @@ export function getFirstIncompleteStep(values: OnboardingDraftValues): number {
     (def, index) => !def.schema.safeParse(pickStepValues(index, values)).success,
   );
   return stepIndex === -1 ? onboardingStepConfig.length - 1 : stepIndex;
+}
+
+/** Fixed order through `pastAttempts` (indices 0–9). */
+export const assessmentPrefixFields = [
+  'nicotineForms',
+  'dailyUseEvents',
+  'firstUseAfterWake',
+  'urgeEnvironments',
+  'emotionalPrecursor',
+  'highStakesReliance',
+  'performanceBelief',
+  'reductionConcern',
+  'selfImageConflict',
+  'pastAttempts',
+] as const satisfies readonly (keyof OnboardingAnswers)[];
+
+const FIELD_TO_SECTION: Record<keyof OnboardingAnswers, number> = {
+  nicotineForms: 0,
+  dailyUseEvents: 0,
+  firstUseAfterWake: 0,
+  urgeEnvironments: 1,
+  emotionalPrecursor: 1,
+  highStakesReliance: 1,
+  performanceBelief: 2,
+  reductionConcern: 2,
+  selfImageConflict: 2,
+  pastAttempts: 3,
+  crashReason: 3,
+  sprintGoal: 4,
+};
+
+export function getSectionForField(field: keyof OnboardingAnswers): number {
+  return FIELD_TO_SECTION[field];
+}
+
+/**
+ * Ordered assessment fields for the current draft. `sprintGoal` appears only after
+ * `pastAttempts` is set; `crashReason` only when `pastAttempts` is not `'0'`.
+ */
+export function getAssessmentSequence(values: OnboardingDraftValues): (keyof OnboardingAnswers)[] {
+  const out: (keyof OnboardingAnswers)[] = [...assessmentPrefixFields];
+  if (values.pastAttempts !== undefined) {
+    if (values.pastAttempts !== '0') {
+      out.push('crashReason');
+    }
+    out.push('sprintGoal');
+  }
+  return out;
+}
+
+export type FieldValidationResult = { success: true } | { success: false; error: ZodError };
+
+export function validateCurrentField(
+  field: keyof OnboardingAnswers,
+  values: OnboardingDraftValues,
+): FieldValidationResult {
+  if (field === 'crashReason') {
+    if (values.pastAttempts === undefined || values.pastAttempts === '0') {
+      return { success: true };
+    }
+    const parsed = z.enum(crashReasonIds).safeParse(values.crashReason);
+    if (!parsed.success) {
+      return { success: false, error: parsed.error };
+    }
+    return { success: true };
+  }
+
+  const fieldSchema = onboardingAnswersObjectSchema.shape[field];
+  const parsed = fieldSchema.safeParse(values[field]);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error };
+  }
+  return { success: true };
+}
+
+export function getFirstIncompleteQuestionIndex(values: OnboardingDraftValues): number {
+  const sequence = getAssessmentSequence(values);
+  for (let i = 0; i < sequence.length; i++) {
+    const field = sequence[i]!;
+    const result = validateCurrentField(field, values);
+    if (!result.success) {
+      return i;
+    }
+  }
+  return Math.max(0, sequence.length - 1);
 }

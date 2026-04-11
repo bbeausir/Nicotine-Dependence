@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { getFirstIncompleteStep } from '@/features/onboarding/schema/stepConfig';
+import {
+  getFirstIncompleteQuestionIndex,
+  getFirstIncompleteStep,
+} from '@/features/onboarding/schema/stepConfig';
 import { parseDraftPayload } from '@/features/onboarding/hooks/useAssessmentDraft';
 import { parseAssessmentSessionPayload } from '@/providers/AssessmentProvider';
 import { calculateScores } from '@/features/onboarding/scoring/calculateScores';
@@ -33,6 +36,7 @@ describe('storage parser guards', () => {
       dailyUseEvents: '5_7',
     });
     expect(getFirstIncompleteStep(parsed ?? {})).toBe(0);
+    expect(getFirstIncompleteQuestionIndex(parsed ?? {})).toBe(2);
   });
 
   it('rejects malformed draft payload shape', () => {
