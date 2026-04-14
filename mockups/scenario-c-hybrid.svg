@@ -1,0 +1,61 @@
+<svg width="430" height="932" viewBox="0 0 430 932" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgC" x1="215" y1="0" x2="215" y2="932" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#121722"/>
+      <stop offset="1" stop-color="#0B0E14"/>
+    </linearGradient>
+    <radialGradient id="glowC" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(308 122) rotate(120) scale(180 240)">
+      <stop stop-color="#B5935B" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#B5935B" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="430" height="932" rx="38" fill="url(#bgC)"/>
+  <rect width="430" height="932" rx="38" fill="url(#glowC)"/>
+  <rect x="163" y="18" width="104" height="8" rx="4" fill="#252D3A"/>
+
+  <text x="32" y="72" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">Scenario C</text>
+  <text x="32" y="108" fill="white" font-size="34" font-family="Georgia, serif">Hybrid shell</text>
+  <text x="32" y="140" fill="#A8B0BD" font-size="17" font-family="Arial, sans-serif">Keeps the 4-tab IA and pulls panic into a persistent action.</text>
+
+  <rect x="24" y="184" width="382" height="150" rx="22" fill="#121820" stroke="#252D3A"/>
+  <text x="46" y="220" fill="#B5935B" font-size="13" font-family="Arial, sans-serif">HOME</text>
+  <text x="46" y="258" fill="white" font-size="28" font-family="Georgia, serif">A calmer daily dashboard</text>
+  <text x="46" y="292" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">The dashboard stays uncluttered because urgent support</text>
+  <text x="46" y="314" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">moves out into a floating action button.</text>
+
+  <rect x="24" y="356" width="382" height="122" rx="20" fill="#121820" stroke="#252D3A"/>
+  <text x="46" y="392" fill="white" font-size="22" font-family="Georgia, serif">Tonight's support plan</text>
+  <text x="46" y="424" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">1. Delay first craving by 10 minutes</text>
+  <text x="46" y="446" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">2. Open the panic action if the urge spikes</text>
+
+  <rect x="24" y="500" width="382" height="218" rx="22" fill="#121820" stroke="#252D3A"/>
+  <text x="46" y="538" fill="white" font-size="24" font-family="Georgia, serif">Why this option is different</text>
+  <text x="46" y="572" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">You still get Dashboard, Social, Resource Center,</text>
+  <text x="46" y="596" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">and More as durable destinations.</text>
+  <text x="46" y="620" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">But the highest-risk action is always one tap away.</text>
+  <rect x="46" y="646" width="140" height="30" rx="15" fill="#241D16"/>
+  <text x="73" y="666" fill="#F0D7A7" font-size="14" font-family="Arial, sans-serif">Balanced hierarchy</text>
+
+  <circle cx="344" cy="688" r="44" fill="#B54B4B"/>
+  <circle cx="344" cy="688" r="43" stroke="#E78F8F" stroke-opacity="0.35"/>
+  <path d="M344 666V710" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  <path d="M322 688H366" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  <text x="308" y="744" fill="#F5C6C6" font-size="14" font-family="Arial, sans-serif">Panic</text>
+
+  <rect x="24" y="774" width="382" height="126" rx="28" fill="#11161E" stroke="#252D3A"/>
+  <rect x="40" y="800" width="74" height="74" rx="18" fill="#17202B"/>
+  <text x="63" y="826" fill="#B5935B" font-size="24" font-family="Arial, sans-serif">D</text>
+  <text x="50" y="854" fill="white" font-size="13" font-family="Arial, sans-serif">Dashboard</text>
+
+  <rect x="128" y="800" width="74" height="74" rx="18" fill="#17202B"/>
+  <text x="152" y="826" fill="#A8B0BD" font-size="24" font-family="Arial, sans-serif">S</text>
+  <text x="148" y="854" fill="#A8B0BD" font-size="13" font-family="Arial, sans-serif">Social</text>
+
+  <rect x="216" y="800" width="74" height="74" rx="18" fill="#17202B"/>
+  <text x="239" y="826" fill="#A8B0BD" font-size="24" font-family="Arial, sans-serif">R</text>
+  <text x="224" y="854" fill="#A8B0BD" font-size="13" font-family="Arial, sans-serif">Resources</text>
+
+  <rect x="304" y="800" width="74" height="74" rx="18" fill="#17202B"/>
+  <text x="328" y="826" fill="#A8B0BD" font-size="24" font-family="Arial, sans-serif">M</text>
+  <text x="318" y="854" fill="#A8B0BD" font-size="13" font-family="Arial, sans-serif">More</text>
+</svg>

@@ -1,0 +1,60 @@
+<svg width="430" height="932" viewBox="0 0 430 932" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgA" x1="215" y1="0" x2="215" y2="932" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#121722"/>
+      <stop offset="1" stop-color="#0B0E14"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(215 120) rotate(90) scale(180 240)">
+      <stop stop-color="#B5935B" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#B5935B" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="430" height="932" rx="38" fill="url(#bgA)"/>
+  <rect width="430" height="932" rx="38" fill="url(#glowA)"/>
+  <rect x="163" y="18" width="104" height="8" rx="4" fill="#252D3A"/>
+
+  <text x="32" y="72" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">Scenario A</text>
+  <text x="32" y="108" fill="white" font-size="34" font-family="Georgia, serif">Welcome back, Ben.</text>
+  <text x="32" y="140" fill="#A8B0BD" font-size="17" font-family="Arial, sans-serif">A simple post-sign-in home with a dedicated panic tab.</text>
+
+  <rect x="24" y="184" width="382" height="196" rx="22" fill="#121820" stroke="#252D3A"/>
+  <text x="46" y="220" fill="#B5935B" font-size="13" font-family="Arial, sans-serif">PRIMARY PATTERN</text>
+  <text x="46" y="264" fill="white" font-size="30" font-family="Georgia, serif">Stress-Linked Use</text>
+  <text x="46" y="300" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">Dependence: 17   Reactivity: High   Regulation: Medium</text>
+  <text x="46" y="338" fill="#A8B0BD" font-size="17" font-family="Arial, sans-serif">Week 1 focus: create distance between stress spikes</text>
+  <text x="46" y="362" fill="#A8B0BD" font-size="17" font-family="Arial, sans-serif">and the first automatic nicotine response.</text>
+
+  <rect x="24" y="404" width="184" height="132" rx="20" fill="#121820" stroke="#252D3A"/>
+  <text x="44" y="438" fill="white" font-size="22" font-family="Georgia, serif">Review results</text>
+  <text x="44" y="470" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">See your scores, drivers,</text>
+  <text x="44" y="492" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">and first-win plan again.</text>
+  <rect x="44" y="510" width="100" height="8" rx="4" fill="#B5935B"/>
+
+  <rect x="222" y="404" width="184" height="132" rx="20" fill="#121820" stroke="#252D3A"/>
+  <text x="242" y="438" fill="white" font-size="22" font-family="Georgia, serif">Week 1 focus</text>
+  <text x="242" y="470" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">Try a 90-second pause</text>
+  <text x="242" y="492" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">before your first craving.</text>
+  <circle cx="360" cy="500" r="20" fill="#1A222C"/>
+  <path d="M352 500H368" stroke="#B5935B" stroke-width="3" stroke-linecap="round"/>
+  <path d="M360 492V508" stroke="#B5935B" stroke-width="3" stroke-linecap="round"/>
+
+  <rect x="24" y="560" width="382" height="164" rx="22" fill="#121820" stroke="#252D3A"/>
+  <text x="46" y="598" fill="white" font-size="24" font-family="Georgia, serif">Support right now</text>
+  <text x="46" y="630" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">The panic tab opens immediate coping tools:</text>
+  <text x="46" y="654" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">breathing, delay timer, and emergency contacts.</text>
+  <rect x="46" y="676" width="158" height="30" rx="15" fill="#241D16"/>
+  <text x="69" y="696" fill="#F0D7A7" font-size="14" font-family="Arial, sans-serif">Fastest rescue path</text>
+
+  <rect x="24" y="774" width="382" height="126" rx="28" fill="#11161E" stroke="#252D3A"/>
+  <rect x="48" y="800" width="92" height="74" rx="20" fill="#17202B"/>
+  <text x="78" y="826" fill="#B5935B" font-size="24" font-family="Arial, sans-serif">O</text>
+  <text x="72" y="854" fill="white" font-size="15" font-family="Arial, sans-serif">Home</text>
+
+  <rect x="169" y="792" width="92" height="90" rx="26" fill="#B54B4B"/>
+  <text x="198" y="826" fill="white" font-size="24" font-family="Arial, sans-serif">!</text>
+  <text x="184" y="856" fill="white" font-size="15" font-family="Arial, sans-serif">Panic</text>
+
+  <rect x="290" y="800" width="92" height="74" rx="20" fill="#17202B"/>
+  <text x="323" y="826" fill="#A8B0BD" font-size="24" font-family="Arial, sans-serif">U</text>
+  <text x="308" y="854" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">Profile</text>
+</svg>
