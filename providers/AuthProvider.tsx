@@ -1,68 +1,170 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import * as Linking from 'expo-linking';
+import type { Session, User } from '@supabase/supabase-js';
 
-/**
- * TODO(DATA): Replace with Supabase session — persist session, expose user, signIn/signOut.
- * Scaffold: local boolean only so routes can be wired before backend exists.
- */
+import { getSupabaseClient, getSupabaseConfigError } from '@/lib/supabase/client';
 
 export type AuthUser = {
   id: string;
   email: string;
 };
 
+type AuthResult = {
+  error: string | null;
+};
+
+export type SignUpResult =
+  | { status: 'signed_in'; error: null }
+  | { status: 'awaiting_confirmation'; error: null }
+  | { status: 'error'; error: string };
+
 type AuthContextValue = {
   user: AuthUser | null;
-  /** True once we know session state (Supabase getSession finished). */
+  session: Session | null;
+  authError: string | null;
   isReady: boolean;
-  signOut: () => void;
-  /** Dev-only helper until Supabase is wired */
-  __devSetUser: (user: AuthUser | null) => void;
+  signIn: (email: string, password: string) => Promise<AuthResult>;
+  signUp: (email: string, password: string) => Promise<SignUpResult>;
+  signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<AuthResult>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-const STORAGE_KEY = 'nicotine.auth.user.v1';
+
+function mapUser(user: User | null): AuthUser | null {
+  if (!user?.email) {
+    return null;
+  }
+  return {
+    id: user.id,
+    email: user.email,
+  };
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const raw = await AsyncStorage.getItem(STORAGE_KEY);
-        if (!cancelled && raw) {
-          setUser(JSON.parse(raw) as AuthUser);
+    const client = getSupabaseClient();
+    const missingConfigError = getSupabaseConfigError();
+
+    if (!client) {
+      setAuthError(missingConfigError);
+      setIsReady(true);
+      return;
+    }
+
+    let active = true;
+    client.auth
+      .getSession()
+      .then(({ data, error }) => {
+        if (!active) return;
+        if (error) {
+          setAuthError(error.message);
+          setSession(null);
+          setUser(null);
+          return;
         }
-      } catch {
-        // keep null user if storage is unavailable/corrupt
-      } finally {
-        if (!cancelled) setIsReady(true);
-      }
-    })();
+
+        setSession(data.session);
+        setUser(mapUser(data.session?.user ?? null));
+      })
+      .finally(() => {
+        if (active) {
+          setIsReady(true);
+        }
+      });
+
+    const { data: subscription } = client.auth.onAuthStateChange((_event, nextSession) => {
+      if (!active) return;
+      setAuthError(null);
+      setSession(nextSession);
+      setUser(mapUser(nextSession?.user ?? null));
+    });
+
     return () => {
-      cancelled = true;
+      active = false;
+      subscription.subscription.unsubscribe();
     };
   }, []);
 
-  const persistUser = (nextUser: AuthUser | null) => {
-    setUser(nextUser);
-    if (nextUser) {
-      void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser));
-    } else {
-      void AsyncStorage.removeItem(STORAGE_KEY);
+  const signIn = async (email: string, password: string): Promise<AuthResult> => {
+    const client = getSupabaseClient();
+    if (!client) {
+      const configError = getSupabaseConfigError();
+      setAuthError(configError);
+      return { error: configError };
     }
+
+    const { error } = await client.auth.signInWithPassword({ email, password });
+    if (error) {
+      return { error: error.message };
+    }
+    setAuthError(null);
+    return { error: null };
+  };
+
+  const signUp = async (email: string, password: string): Promise<SignUpResult> => {
+    const client = getSupabaseClient();
+    if (!client) {
+      const configError = getSupabaseConfigError() ?? 'Supabase is not configured.';
+      setAuthError(configError);
+      return { status: 'error', error: configError };
+    }
+
+    const { data, error } = await client.auth.signUp({ email, password });
+    if (error) {
+      return { status: 'error', error: error.message };
+    }
+    setAuthError(null);
+    if (data.session) {
+      return { status: 'signed_in', error: null };
+    }
+    return { status: 'awaiting_confirmation', error: null };
+  };
+
+  const signOut = async (): Promise<void> => {
+    const client = getSupabaseClient();
+    if (!client) {
+      setSession(null);
+      setUser(null);
+      return;
+    }
+    await client.auth.signOut();
+  };
+
+  const resetPassword = async (email: string): Promise<AuthResult> => {
+    const client = getSupabaseClient();
+    if (!client) {
+      const configError = getSupabaseConfigError();
+      setAuthError(configError);
+      return { error: configError };
+    }
+
+    const { error } = await client.auth.resetPasswordForEmail(email, {
+      redirectTo: Linking.createURL('/sign-in'),
+    });
+    if (error) {
+      return { error: error.message };
+    }
+    return { error: null };
   };
 
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
+      session,
+      authError,
       isReady,
-      signOut: () => persistUser(null),
-      __devSetUser: persistUser,
+      signIn,
+      signUp,
+      signOut,
+      resetPassword,
     }),
-    [user, isReady],
+    [user, session, authError, isReady],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

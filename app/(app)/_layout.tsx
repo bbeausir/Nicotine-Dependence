@@ -27,7 +27,7 @@ export default function AppGroupLayout() {
 
   return (
     <Stack>
-      <Stack.Screen name="home" options={{ title: 'Home' }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
     </Stack>
   );
 }

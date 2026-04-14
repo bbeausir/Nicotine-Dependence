@@ -1,0 +1,66 @@
+<svg width="430" height="932" viewBox="0 0 430 932" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgB" x1="215" y1="0" x2="215" y2="932" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#121722"/>
+      <stop offset="1" stop-color="#0B0E14"/>
+    </linearGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(118 116) rotate(44) scale(180 240)">
+      <stop stop-color="#B5935B" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#B5935B" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="430" height="932" rx="38" fill="url(#bgB)"/>
+  <rect width="430" height="932" rx="38" fill="url(#glowB)"/>
+  <rect x="163" y="18" width="104" height="8" rx="4" fill="#252D3A"/>
+
+  <text x="32" y="72" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">Scenario B</text>
+  <text x="32" y="108" fill="white" font-size="34" font-family="Georgia, serif">Dashboard with modules</text>
+  <text x="32" y="140" fill="#A8B0BD" font-size="17" font-family="Arial, sans-serif">A broader 4-tab shell with social and resources surfaced.</text>
+
+  <rect x="24" y="184" width="382" height="150" rx="22" fill="#121820" stroke="#252D3A"/>
+  <text x="46" y="220" fill="#B5935B" font-size="13" font-family="Arial, sans-serif">TODAY</text>
+  <text x="46" y="258" fill="white" font-size="28" font-family="Georgia, serif">Your profile dashboard</text>
+  <text x="46" y="292" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">Stress-Linked Use with a strong evening trigger pattern.</text>
+  <rect x="46" y="304" width="140" height="8" rx="4" fill="#B5935B"/>
+
+  <rect x="24" y="356" width="184" height="158" rx="20" fill="#121820" stroke="#252D3A"/>
+  <text x="44" y="390" fill="white" font-size="22" font-family="Georgia, serif">Social feed</text>
+  <text x="44" y="422" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">A peer story about handling</text>
+  <text x="44" y="444" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">after-work cravings appears</text>
+  <text x="44" y="466" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">directly in the app shell.</text>
+  <circle cx="64" cy="490" r="8" fill="#B5935B"/>
+  <rect x="80" y="482" width="86" height="14" rx="7" fill="#1A222C"/>
+
+  <rect x="222" y="356" width="184" height="158" rx="20" fill="#121820" stroke="#252D3A"/>
+  <text x="242" y="390" fill="white" font-size="22" font-family="Georgia, serif">Resource center</text>
+  <text x="242" y="422" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">Guides, craving drills, and</text>
+  <text x="242" y="444" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">education live in a dedicated</text>
+  <text x="242" y="466" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">destination instead of home.</text>
+  <rect x="242" y="484" width="112" height="10" rx="5" fill="#1A222C"/>
+
+  <rect x="24" y="536" width="382" height="204" rx="22" fill="#121820" stroke="#252D3A"/>
+  <text x="46" y="574" fill="white" font-size="24" font-family="Georgia, serif">What changes in this model</text>
+  <text x="46" y="608" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">Home becomes a true dashboard.</text>
+  <text x="46" y="632" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">Social and resources each justify a tab.</text>
+  <text x="46" y="656" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">Panic support likely moves inside dashboard,</text>
+  <text x="46" y="680" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">more menu, or a utility banner.</text>
+  <rect x="46" y="698" width="174" height="30" rx="15" fill="#241D16"/>
+  <text x="68" y="718" fill="#F0D7A7" font-size="14" font-family="Arial, sans-serif">Highest feature surface area</text>
+
+  <rect x="24" y="774" width="382" height="126" rx="28" fill="#11161E" stroke="#252D3A"/>
+  <rect x="40" y="800" width="74" height="74" rx="18" fill="#17202B"/>
+  <text x="63" y="826" fill="#B5935B" font-size="24" font-family="Arial, sans-serif">D</text>
+  <text x="50" y="854" fill="white" font-size="13" font-family="Arial, sans-serif">Dashboard</text>
+
+  <rect x="128" y="800" width="74" height="74" rx="18" fill="#17202B"/>
+  <text x="152" y="826" fill="#A8B0BD" font-size="24" font-family="Arial, sans-serif">S</text>
+  <text x="148" y="854" fill="#A8B0BD" font-size="13" font-family="Arial, sans-serif">Social</text>
+
+  <rect x="216" y="800" width="74" height="74" rx="18" fill="#17202B"/>
+  <text x="239" y="826" fill="#A8B0BD" font-size="24" font-family="Arial, sans-serif">R</text>
+  <text x="224" y="854" fill="#A8B0BD" font-size="13" font-family="Arial, sans-serif">Resources</text>
+
+  <rect x="304" y="800" width="74" height="74" rx="18" fill="#17202B"/>
+  <text x="328" y="826" fill="#A8B0BD" font-size="24" font-family="Arial, sans-serif">M</text>
+  <text x="318" y="854" fill="#A8B0BD" font-size="13" font-family="Arial, sans-serif">More</text>
+</svg>

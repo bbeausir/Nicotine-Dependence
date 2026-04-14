@@ -1,0 +1,70 @@
+<svg width="430" height="932" viewBox="0 0 430 932" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgD" x1="215" y1="0" x2="215" y2="932" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#121722"/>
+      <stop offset="1" stop-color="#0B0E14"/>
+    </linearGradient>
+    <radialGradient id="glowD" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(215 118) rotate(90) scale(180 240)">
+      <stop stop-color="#B5935B" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#B5935B" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="430" height="932" rx="38" fill="url(#bgD)"/>
+  <rect width="430" height="932" rx="38" fill="url(#glowD)"/>
+  <rect x="163" y="18" width="104" height="8" rx="4" fill="#252D3A"/>
+
+  <text x="32" y="72" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">Scenario D</text>
+  <text x="32" y="108" fill="white" font-size="34" font-family="Georgia, serif">Five-icon utility nav</text>
+  <text x="32" y="140" fill="#A8B0BD" font-size="17" font-family="Arial, sans-serif">Home and feed flank a centered red panic button.</text>
+
+  <rect x="24" y="184" width="382" height="158" rx="22" fill="#121820" stroke="#252D3A"/>
+  <text x="46" y="220" fill="#B5935B" font-size="13" font-family="Arial, sans-serif">HOME</text>
+  <text x="46" y="258" fill="white" font-size="28" font-family="Georgia, serif">A lightweight daily hub</text>
+  <text x="46" y="292" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">The current dashboard stays focused on results,</text>
+  <text x="46" y="314" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">week-one support, and a quick return path.</text>
+
+  <rect x="24" y="364" width="184" height="154" rx="20" fill="#121820" stroke="#252D3A"/>
+  <text x="44" y="398" fill="white" font-size="22" font-family="Georgia, serif">Feed</text>
+  <text x="44" y="430" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">Short peer updates or</text>
+  <text x="44" y="452" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">coach prompts live one tap</text>
+  <text x="44" y="474" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">away from home.</text>
+  <circle cx="62" cy="492" r="7" fill="#B5935B"/>
+  <rect x="76" y="485" width="86" height="12" rx="6" fill="#1A222C"/>
+
+  <rect x="222" y="364" width="184" height="154" rx="20" fill="#121820" stroke="#252D3A"/>
+  <text x="242" y="398" fill="white" font-size="22" font-family="Georgia, serif">Resources</text>
+  <text x="242" y="430" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">Exercises, craving plans,</text>
+  <text x="242" y="452" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">and educational content stay</text>
+  <text x="242" y="474" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif">separate from the feed.</text>
+  <rect x="242" y="486" width="112" height="10" rx="5" fill="#1A222C"/>
+
+  <rect x="24" y="540" width="382" height="178" rx="22" fill="#121820" stroke="#252D3A"/>
+  <text x="46" y="578" fill="white" font-size="24" font-family="Georgia, serif">What this layout implies</text>
+  <text x="46" y="612" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">The panic action becomes the center anchor of the app.</text>
+  <text x="46" y="636" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">Feed gets equal weight with Home and Resources.</text>
+  <text x="46" y="660" fill="#A8B0BD" font-size="16" font-family="Arial, sans-serif">Settings stays visible without consuming a full “More” tab.</text>
+  <rect x="46" y="682" width="182" height="30" rx="15" fill="#2B1717"/>
+  <text x="72" y="702" fill="#F2B9B9" font-size="14" font-family="Arial, sans-serif">Most explicit crisis prioritization</text>
+
+  <rect x="20" y="774" width="390" height="126" rx="28" fill="#11161E" stroke="#252D3A"/>
+
+  <rect x="28" y="802" width="64" height="70" rx="18" fill="#17202B"/>
+  <text x="50" y="827" fill="#B5935B" font-size="22" font-family="Arial, sans-serif">O</text>
+  <text x="41" y="854" fill="white" font-size="12" font-family="Arial, sans-serif">Home</text>
+
+  <rect x="102" y="802" width="64" height="70" rx="18" fill="#17202B"/>
+  <text x="125" y="827" fill="#A8B0BD" font-size="22" font-family="Arial, sans-serif">F</text>
+  <text x="120" y="854" fill="#A8B0BD" font-size="12" font-family="Arial, sans-serif">Feed</text>
+
+  <rect x="176" y="792" width="78" height="90" rx="26" fill="#B54B4B"/>
+  <text x="206" y="826" fill="white" font-size="24" font-family="Arial, sans-serif">!</text>
+  <text x="190" y="856" fill="white" font-size="12" font-family="Arial, sans-serif">Panic</text>
+
+  <rect x="264" y="802" width="64" height="70" rx="18" fill="#17202B"/>
+  <text x="286" y="827" fill="#A8B0BD" font-size="22" font-family="Arial, sans-serif">R</text>
+  <text x="270" y="854" fill="#A8B0BD" font-size="12" font-family="Arial, sans-serif">Resources</text>
+
+  <rect x="338" y="802" width="64" height="70" rx="18" fill="#17202B"/>
+  <text x="361" y="827" fill="#A8B0BD" font-size="22" font-family="Arial, sans-serif">S</text>
+  <text x="350" y="854" fill="#A8B0BD" font-size="12" font-family="Arial, sans-serif">Settings</text>
+</svg>
