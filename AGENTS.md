@@ -12,3 +12,8 @@ These rules apply to all agent work in this codebase.
 - Any business logic must be separated from UI and testable.
 - Flag anything that seems like overbuilding before implementing it.
 - Only build from scratch if you have specialized UX needs or operate in highly constrained environments where you cannot use external services.
+- Update README.md with new processes, features, tech stack, or notes for other developers. Update Agent Notes (string) below with helpful notes to agents
+
+## Agent Notes
+
+- 
