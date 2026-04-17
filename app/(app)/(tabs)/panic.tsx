@@ -1,7 +1,8 @@
 import { Alert, StyleSheet, Text, View } from 'react-native';
 
-import { PrimaryButton } from '@/components/ui/PrimaryButton';
+import { CircleActionButton } from '@/components/ui/CircleActionButton';
 import { Screen } from '@/components/ui/Screen';
+import { StatsCard } from '@/components/ui/StatsCard';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getTokens } from '@/theme/tokens';
 
@@ -11,49 +12,44 @@ export default function PanicTabScreen() {
 
   return (
     <Screen scroll contentContainerStyle={styles.content}>
-      <View style={styles.textBlock}>
-        <Text style={[styles.title, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>SOS</Text>
-        <Text style={[styles.body, { color: t.color.textPrimary, fontFamily: t.typeface.ui }]}>
-          Panic is your immediate support space during cravings.
-        </Text>
-        <Text style={[styles.body, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
-          Fast relief tools are being connected now.
-        </Text>
-        <Text style={[styles.bodyMuted, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
-          TODO: Add one-tap coping flows, timers, and SOS actions.
-        </Text>
+      <Text style={[styles.heading, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
+        {'How can I help\nyou right now?'}
+      </Text>
+
+      <View style={styles.cluster}>
+        <View style={styles.topRow}>
+          <CircleActionButton
+            icon="happy-outline"
+            label="Craving Help"
+            onPress={() =>
+              Alert.alert('Craving Help', 'A 2-minute guided grounding exercise is coming soon.')
+            }
+          />
+        </View>
+        <View style={styles.bottomRow}>
+          <CircleActionButton
+            icon="chatbubble-ellipses-outline"
+            label="Get Support"
+            onPress={() =>
+              Alert.alert('Get Support', 'Quick access to a trusted contact is coming soon.')
+            }
+          />
+          <CircleActionButton
+            icon="warning-outline"
+            label={'System\nReboot'}
+            onPress={() =>
+              Alert.alert('System Reboot', 'A full reset protocol is coming soon.')
+            }
+            variant="accent"
+          />
+        </View>
       </View>
-      <View style={styles.actions}>
-        <PrimaryButton
-          onPress={() =>
-            Alert.alert(
-              'Grounding',
-              'A short guided grounding exercise is coming. If you are in crisis, please reach out to local emergency services or a crisis line.',
-            )
-          }>
-          Start a 2-minute grounding
-        </PrimaryButton>
-        <PrimaryButton
-          variant="secondary"
-          onPress={() =>
-            Alert.alert(
-              'Crisis resources',
-              'We will link trusted hotlines and resources here. If you need help right now, use your local emergency number.',
-            )
-          }>
-          Open crisis resources
-        </PrimaryButton>
-        <PrimaryButton
-          variant="ghost"
-          onPress={() =>
-            Alert.alert(
-              'Reach out',
-              'Quick access to text someone you trust is on the roadmap. You deserve support.',
-            )
-          }>
-          Text someone you trust
-        </PrimaryButton>
-      </View>
+
+      <Text style={[styles.motivational, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
+        {'Cravings can come and go.\nTake a deep breath.\nYou\'ve got this.'}
+      </Text>
+
+      <StatsCard daysNicotineFree={14} moneySaved={152.5} />
     </Screen>
   );
 }
@@ -61,29 +57,35 @@ export default function PanicTabScreen() {
 const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 32,
-    gap: 24,
+    paddingTop: 36,
+    paddingBottom: 40,
+    gap: 36,
     width: '100%',
     maxWidth: 860,
     alignSelf: 'center',
   },
-  textBlock: {
-    gap: 12,
-  },
-  title: {
+  heading: {
     fontSize: 28,
-    lineHeight: 34,
+    lineHeight: 36,
+    textAlign: 'center',
   },
-  body: {
+  cluster: {
+    alignItems: 'center',
+  },
+  topRow: {
+    alignItems: 'center',
+    zIndex: 3,
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 20,
+    marginTop: -18,
+    zIndex: 1,
+  },
+  motivational: {
     fontSize: 16,
-    lineHeight: 24,
-  },
-  bodyMuted: {
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  actions: {
-    gap: 12,
+    lineHeight: 26,
+    textAlign: 'center',
   },
 });
