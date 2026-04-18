@@ -1,24 +1,42 @@
 import { Alert, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
 import { router } from 'expo-router';
+import Constants from 'expo-constants';
 
 import { SettingsRow } from '@/components/ui/SettingsRow';
 import { SettingsSection } from '@/components/ui/SettingsSection';
 import { Screen } from '@/components/ui/Screen';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useAuth } from '@/providers/AuthProvider';
+import { useAssessment } from '@/providers/AssessmentProvider';
 import { getTokens } from '@/theme/tokens';
 
 export default function SettingsTabScreen() {
   const scheme = useColorScheme();
   const t = getTokens(scheme);
   const { user, signOut } = useAuth();
+  const { clear: clearAssessment } = useAssessment();
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const initial = user?.email?.charAt(0).toUpperCase() ?? '?';
 
   function handleSignOut() {
     Alert.alert('Sign out', 'Are you sure you want to sign out?', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Sign out', style: 'destructive', onPress: () => signOut() },
+      {
+        text: 'Sign out',
+        style: 'destructive',
+        onPress: async () => {
+          setIsSigningOut(true);
+          const { error } = await signOut();
+          if (error) {
+            setIsSigningOut(false);
+            Alert.alert('Sign out failed', error);
+            return;
+          }
+          clearAssessment();
+        },
+      },
     ]);
   }
 
@@ -86,6 +104,8 @@ export default function SettingsTabScreen() {
           label="Sign out"
           onPress={handleSignOut}
           showChevron={false}
+          disabled={isSigningOut}
+          loading={isSigningOut}
         />
         <SettingsRow
           icon="trash-outline"
@@ -96,6 +116,10 @@ export default function SettingsTabScreen() {
           isLast
         />
       </SettingsSection>
+
+      <Text style={[styles.version, { color: t.color.textMuted, fontFamily: t.typeface.ui }]}>
+        Version {Constants.expoConfig?.version ?? '—'}
+      </Text>
     </Screen>
   );
 }
@@ -133,5 +157,10 @@ const styles = StyleSheet.create({
   },
   email: {
     fontSize: 14,
+  },
+  version: {
+    fontSize: 12,
+    textAlign: 'center',
+    paddingBottom: 8,
   },
 });

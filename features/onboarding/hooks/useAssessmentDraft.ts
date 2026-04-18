@@ -1,5 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useRef } from 'react';
+
+import { getAssessmentStorage } from '@/lib/storage/assessmentStorage';
 import type { UseFormReset } from 'react-hook-form';
 
 import {
@@ -10,6 +11,7 @@ import {
 } from '@/features/onboarding/schema/onboardingAnswers';
 
 const STORAGE_KEY = 'nicotine.onboardingDraft.v1';
+const storage = getAssessmentStorage();
 
 export function parseDraftPayload(raw: string): OnboardingDraftValues | null {
   try {
@@ -33,7 +35,7 @@ export function useAssessmentDraft(
     let cancelled = false;
     (async () => {
       try {
-        const raw = await AsyncStorage.getItem(STORAGE_KEY);
+        const raw = await storage.getItem(STORAGE_KEY);
         if (cancelled) return;
         if (raw) {
           const parsed = parseDraftPayload(raw);
@@ -44,7 +46,7 @@ export function useAssessmentDraft(
             });
             onHydrate?.(parsed);
           } else {
-            await AsyncStorage.removeItem(STORAGE_KEY);
+            await storage.removeItem(STORAGE_KEY);
           }
         }
       } catch {
@@ -66,7 +68,7 @@ export function useAssessmentDraft(
     debounce.current = setTimeout(() => {
       if (!canPersist.current) return;
       const merged = { ...defaultOnboardingAnswers(), ...values };
-      void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+      void storage.setItem(STORAGE_KEY, JSON.stringify(merged));
     }, 450);
     return () => {
       if (debounce.current) clearTimeout(debounce.current);
@@ -79,7 +81,7 @@ export function useAssessmentDraft(
       clearTimeout(debounce.current);
       debounce.current = null;
     }
-    await AsyncStorage.removeItem(STORAGE_KEY);
+    await storage.removeItem(STORAGE_KEY);
   }, []);
 
   return { clearDraft };

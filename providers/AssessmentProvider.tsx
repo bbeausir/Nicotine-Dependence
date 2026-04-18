@@ -1,5 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+
+import { getAssessmentStorage } from '@/lib/storage/assessmentStorage';
 
 import {
   assessmentSessionSchema,
@@ -22,6 +23,7 @@ type AssessmentContextValue = {
 
 const AssessmentContext = createContext<AssessmentContextValue | undefined>(undefined);
 const STORAGE_KEY = 'nicotine.assessment.session.v1';
+const storage = getAssessmentStorage();
 
 export function parseAssessmentSessionPayload(
   raw: string,
@@ -44,14 +46,14 @@ export function AssessmentProvider({ children }: { children: React.ReactNode }) 
     let cancelled = false;
     (async () => {
       try {
-        const raw = await AsyncStorage.getItem(STORAGE_KEY);
+        const raw = await storage.getItem(STORAGE_KEY);
         if (cancelled || !raw) return;
         const parsed = parseAssessmentSessionPayload(raw);
         if (parsed) {
           setAnswers(parsed.answers);
           setResult(parsed.result);
         } else {
-          await AsyncStorage.removeItem(STORAGE_KEY);
+          await storage.removeItem(STORAGE_KEY);
         }
       } catch {
         // ignore malformed storage
@@ -72,12 +74,12 @@ export function AssessmentProvider({ children }: { children: React.ReactNode }) 
       setSession: (a, r) => {
         setAnswers(a);
         setResult(r);
-        void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ answers: a, result: r }));
+        void storage.setItem(STORAGE_KEY, JSON.stringify({ answers: a, result: r }));
       },
       clear: () => {
         setAnswers(null);
         setResult(null);
-        void AsyncStorage.removeItem(STORAGE_KEY);
+        void storage.removeItem(STORAGE_KEY);
       },
     }),
     [answers, isReady, result],

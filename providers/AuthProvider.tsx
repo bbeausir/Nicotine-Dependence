@@ -3,6 +3,12 @@ import * as Linking from 'expo-linking';
 import type { Session, User } from '@supabase/supabase-js';
 
 import { getSupabaseClient, getSupabaseConfigError } from '@/lib/supabase/client';
+import { getAssessmentStorage } from '@/lib/storage/assessmentStorage';
+
+const ASSESSMENT_STORAGE_KEYS = [
+  'nicotine.assessment.session.v1',
+  'nicotine.onboardingDraft.v1',
+];
 
 export type AuthUser = {
   id: string;
@@ -25,7 +31,7 @@ type AuthContextValue = {
   isReady: boolean;
   signIn: (email: string, password: string) => Promise<AuthResult>;
   signUp: (email: string, password: string) => Promise<SignUpResult>;
-  signOut: () => Promise<void>;
+  signOut: () => Promise<{ error: string | null }>;
   resetPassword: (email: string) => Promise<AuthResult>;
 };
 
@@ -126,14 +132,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { status: 'awaiting_confirmation', error: null };
   };
 
-  const signOut = async (): Promise<void> => {
+  const signOut = async (): Promise<{ error: string | null }> => {
     const client = getSupabaseClient();
+    const localStorageClear = async () => {
+      const storage = getAssessmentStorage();
+      await Promise.allSettled(ASSESSMENT_STORAGE_KEYS.map((k) => storage.removeItem(k)));
+    };
     if (!client) {
+      await localStorageClear();
       setSession(null);
       setUser(null);
-      return;
+      return { error: null };
     }
-    await client.auth.signOut();
+    try {
+      const { error } = await client.auth.signOut();
+      await localStorageClear();
+      if (error) return { error: error.message };
+      return { error: null };
+    } catch (e) {
+      return { error: e instanceof Error ? e.message : 'Sign out failed' };
+    }
   };
 
   const resetPassword = async (email: string): Promise<AuthResult> => {
