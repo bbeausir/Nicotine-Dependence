@@ -68,6 +68,9 @@ providers/
 lib/
   supabase/          client + storage adapters
   analytics/         event names + tracking stub
+
+supabase/
+  migrations/        database schema migrations
 ```
 
 ## Environment Variables
@@ -82,6 +85,23 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 Without these values, the app still loads, but auth actions will surface a configuration error.
+
+## Database Schema
+
+The current durable backend model is intentionally small:
+
+- `profiles`: one app-owned profile row per Supabase auth user.
+- `onboarding_profiles`: one onboarding assessment snapshot per user.
+
+Onboarding is treated as a setup snapshot, not an ongoing assessment or tracking history. The app still needs repository functions and flow wiring before completed onboarding data syncs to Supabase.
+
+For database work, use the Supabase CLI and create migrations rather than editing the remote database manually:
+
+```bash
+npx supabase@latest migration new <descriptive_name>
+```
+
+Then apply migrations through the linked Supabase project workflow when the project is configured.
 
 ## Getting Started
 
@@ -165,7 +185,7 @@ This repository is still in MVP mode. The codebase explicitly avoids speculative
 - panic/SOS coping flows
 - structured resource library
 - account/settings management
-- persisted assessment history in Supabase
+- syncing the onboarding profile snapshot to Supabase
 - production analytics wiring
 
 ## Notes for Contributors

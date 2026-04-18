@@ -16,4 +16,4 @@ These rules apply to all agent work in this codebase.
 
 ## Agent Notes
 
-- 
+- Database migrations live in `supabase/migrations`. Current durable backend scope is `profiles` plus one `onboarding_profiles` snapshot per user; onboarding is not intended to become ongoing tracking history.

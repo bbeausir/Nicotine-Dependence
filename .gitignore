@@ -43,3 +43,6 @@ yarn-error.*
 
 # local scratch docs
 docs/scratch/
+
+# Supabase local CLI state
+supabase/.temp/
