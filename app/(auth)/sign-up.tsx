@@ -2,14 +2,16 @@ import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { FormError } from '@/components/ui/FormError';
 import { PrimaryButton } from '@/components/ui/PrimaryButton';
 import { Screen } from '@/components/ui/Screen';
 import { useColorScheme } from '@/components/useColorScheme';
+import { friendlyAuthError } from '@/features/auth/errorMessages';
+import { getSignUpValidationError, normalizeEmail } from '@/features/auth/validation';
 import { AnalyticsEvents } from '@/lib/analytics/events';
 import { track } from '@/lib/analytics/track';
 import { useAuth } from '@/providers/AuthProvider';
 import { getTokens } from '@/theme/tokens';
-import { getSignUpValidationError, normalizeEmail } from '@/features/auth/validation';
 
 type SignUpPhase = 'form' | 'check_email';
 
@@ -64,13 +66,13 @@ export default function SignUpScreen() {
           autoCapitalize="none"
           autoComplete="email"
           keyboardType="email-address"
-          onChangeText={setEmail}
+          onChangeText={(v) => { setEmail(v); setSubmitError(null); }}
           placeholder="Email"
           placeholderTextColor={t.color.textMuted}
           style={[
             styles.input,
             {
-              borderColor: t.color.border,
+              borderColor: submitError ? t.color.danger : t.color.border,
               color: t.color.textPrimary,
               fontFamily: t.typeface.ui,
             },
@@ -80,14 +82,14 @@ export default function SignUpScreen() {
         <TextInput
           autoCapitalize="none"
           autoComplete="new-password"
-          onChangeText={setPassword}
+          onChangeText={(v) => { setPassword(v); setSubmitError(null); }}
           placeholder="Password (8+ characters for this form)"
           placeholderTextColor={t.color.textMuted}
           secureTextEntry
           style={[
             styles.input,
             {
-              borderColor: t.color.border,
+              borderColor: submitError ? t.color.danger : t.color.border,
               color: t.color.textPrimary,
               fontFamily: t.typeface.ui,
             },
@@ -97,14 +99,14 @@ export default function SignUpScreen() {
         <TextInput
           autoCapitalize="none"
           autoComplete="new-password"
-          onChangeText={setConfirmPassword}
+          onChangeText={(v) => { setConfirmPassword(v); setSubmitError(null); }}
           placeholder="Confirm password"
           placeholderTextColor={t.color.textMuted}
           secureTextEntry
           style={[
             styles.input,
             {
-              borderColor: t.color.border,
+              borderColor: submitError ? t.color.danger : t.color.border,
               color: t.color.textPrimary,
               fontFamily: t.typeface.ui,
             },
@@ -112,12 +114,7 @@ export default function SignUpScreen() {
           value={confirmPassword}
         />
 
-        {submitError ? (
-          <Text style={[styles.error, { color: '#ef4444', fontFamily: t.typeface.ui }]}>{submitError}</Text>
-        ) : null}
-        {authError ? (
-          <Text style={[styles.error, { color: '#ef4444', fontFamily: t.typeface.ui }]}>{authError}</Text>
-        ) : null}
+        <FormError message={submitError ?? friendlyAuthError(authError)} />
 
         <PrimaryButton
           disabled={!canSubmit}
@@ -135,7 +132,7 @@ export default function SignUpScreen() {
               const result = await signUp(trimmedEmail, password);
               setIsSubmitting(false);
               if (result.status === 'error') {
-                setSubmitError(result.error);
+                setSubmitError(friendlyAuthError(result.error));
                 return;
               }
               if (result.status === 'awaiting_confirmation') {
@@ -184,6 +181,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     fontSize: 15,
   },
-  error: { fontSize: 13, lineHeight: 18 },
   link: { marginTop: 8 },
 });

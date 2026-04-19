@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { FormError } from '@/components/ui/FormError';
 import { PrimaryButton } from '@/components/ui/PrimaryButton';
 import { Screen } from '@/components/ui/Screen';
 import { useColorScheme } from '@/components/useColorScheme';
+import { friendlyAuthError } from '@/features/auth/errorMessages';
+import { getForgotPasswordValidationError, normalizeEmail } from '@/features/auth/validation';
 import { useAuth } from '@/providers/AuthProvider';
 import { getTokens } from '@/theme/tokens';
-import { getForgotPasswordValidationError, normalizeEmail } from '@/features/auth/validation';
 
 export default function ForgotPasswordScreen() {
   const scheme = useColorScheme();
@@ -34,7 +36,7 @@ export default function ForgotPasswordScreen() {
     setLoading(false);
 
     if (result.error) {
-      setError(result.error);
+      setError(friendlyAuthError(result.error));
       return;
     }
 
@@ -88,7 +90,7 @@ export default function ForgotPasswordScreen() {
             style={[
               styles.input,
               {
-                borderColor: error ? t.color.accent : t.color.border,
+                borderColor: error ? t.color.danger : t.color.border,
                 color: t.color.textPrimary,
                 fontFamily: t.typeface.ui,
               },
@@ -97,12 +99,10 @@ export default function ForgotPasswordScreen() {
           />
         </View>
 
-        {error ? (
-          <Text style={[styles.message, { color: t.color.accent, fontFamily: t.typeface.ui }]}>{error}</Text>
-        ) : null}
+        <FormError message={error} />
 
         {success ? (
-          <Text style={[styles.message, { color: t.color.textPrimary, fontFamily: t.typeface.ui }]}>
+          <Text style={[styles.message, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
             {success}
           </Text>
         ) : null}
