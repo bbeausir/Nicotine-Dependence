@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import * as Linking from 'expo-linking';
+import { router } from 'expo-router';
 import type { Session, User } from '@supabase/supabase-js';
 
 import { getSupabaseClient, getSupabaseConfigError } from '@/lib/supabase/client';
@@ -34,6 +35,7 @@ type AuthContextValue = {
   signUp: (email: string, password: string) => Promise<SignUpResult>;
   signOut: () => Promise<{ error: string | null }>;
   resetPassword: (email: string) => Promise<AuthResult>;
+  updatePassword: (password: string) => Promise<AuthResult>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -85,11 +87,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       });
 
-    const { data: subscription } = client.auth.onAuthStateChange((_event, nextSession) => {
+    const { data: subscription } = client.auth.onAuthStateChange((event, nextSession) => {
       if (!active) return;
       setAuthError(null);
       setSession(nextSession);
       setUser(mapUser(nextSession?.user ?? null));
+      if (event === 'PASSWORD_RECOVERY') {
+        router.replace('/update-password');
+      }
     });
 
     return () => {
@@ -173,8 +178,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const { error } = await client.auth.resetPasswordForEmail(email, {
-      redirectTo: Linking.createURL('/sign-in'),
+      redirectTo: Linking.createURL('/update-password'),
     });
+    if (error) {
+      return { error: error.message };
+    }
+    return { error: null };
+  };
+
+  const updatePassword = async (password: string): Promise<AuthResult> => {
+    const client = getSupabaseClient();
+    if (!client) {
+      const configError = getSupabaseConfigError();
+      setAuthError(configError);
+      return { error: configError };
+    }
+
+    const { error } = await client.auth.updateUser({ password });
     if (error) {
       return { error: error.message };
     }
@@ -191,6 +211,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signUp,
       signOut,
       resetPassword,
+      updatePassword,
     }),
     [user, session, authError, isReady],
   );

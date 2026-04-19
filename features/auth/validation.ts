@@ -36,6 +36,19 @@ export function getSignInValidationError(email: string, password: string): strin
   return null;
 }
 
+export function getUpdatePasswordValidationError(
+  password: string,
+  confirmPassword: string,
+): string | null {
+  if (!isValidPassword(password)) {
+    return 'Password must be at least 8 characters.';
+  }
+  if (password !== confirmPassword) {
+    return 'Passwords do not match.';
+  }
+  return null;
+}
+
 export function getSignUpValidationError(
   email: string,
   password: string,

@@ -24,6 +24,10 @@ vi.mock('expo-linking', () => ({
   createURL: linkingMocks.createURL,
 }));
 
+vi.mock('expo-router', () => ({
+  router: { replace: vi.fn(), push: vi.fn(), back: vi.fn() },
+}));
+
 type MockSession = {
   user: {
     id: string;
