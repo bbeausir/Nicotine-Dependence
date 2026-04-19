@@ -5,7 +5,7 @@ import {
 } from '@expo-google-fonts/inter';
 import { PlayfairDisplay_600SemiBold } from '@expo-google-fonts/playfair-display';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { ThemeProvider } from '@react-navigation/native';
+import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -16,6 +16,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/components/useColorScheme';
 import { AssessmentProvider } from '@/providers/AssessmentProvider';
 import { AuthProvider } from '@/providers/AuthProvider';
+import { ThemeProvider } from '@/providers/ThemeProvider';
 import { getNavigationTheme } from '@/theme/navigationTheme';
 
 export { ErrorBoundary } from 'expo-router';
@@ -54,23 +55,31 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  return (
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <AssessmentProvider>
+            <NavigationWrapper />
+          </AssessmentProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </SafeAreaProvider>
+  );
+}
+
+function NavigationWrapper() {
   const colorScheme = useColorScheme();
 
   return (
-    <SafeAreaProvider>
-      <AuthProvider>
-        <AssessmentProvider>
-          <ThemeProvider value={getNavigationTheme(colorScheme)}>
-            <Stack>
-              <Stack.Screen name="(welcome)" options={{ headerShown: false }} />
-              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-              <Stack.Screen name="results" options={{ title: 'Your results' }} />
-              <Stack.Screen name="(app)" options={{ headerShown: false }} />
-            </Stack>
-          </ThemeProvider>
-        </AssessmentProvider>
-      </AuthProvider>
-    </SafeAreaProvider>
+    <NavigationThemeProvider value={getNavigationTheme(colorScheme)}>
+      <Stack>
+        <Stack.Screen name="(welcome)" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+        <Stack.Screen name="results" options={{ title: 'Your results' }} />
+        <Stack.Screen name="(app)" options={{ headerShown: false }} />
+      </Stack>
+    </NavigationThemeProvider>
   );
 }

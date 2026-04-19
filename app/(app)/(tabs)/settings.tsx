@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react';
 import { router } from 'expo-router';
 import Constants from 'expo-constants';
@@ -9,6 +9,7 @@ import { Screen } from '@/components/ui/Screen';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useAuth } from '@/providers/AuthProvider';
 import { useAssessment } from '@/providers/AssessmentProvider';
+import { useTheme, type ThemePreference } from '@/providers/ThemeProvider';
 import { getTokens } from '@/theme/tokens';
 
 export default function SettingsTabScreen() {
@@ -16,7 +17,14 @@ export default function SettingsTabScreen() {
   const t = getTokens(scheme);
   const { user, signOut } = useAuth();
   const { clear: clearAssessment } = useAssessment();
+  const { themePreference, setThemePreference } = useTheme();
   const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const THEME_OPTIONS: { label: string; value: ThemePreference }[] = [
+    { label: 'System', value: 'system' },
+    { label: 'Light', value: 'light' },
+    { label: 'Dark', value: 'dark' },
+  ];
 
   const initial = user?.email?.charAt(0).toUpperCase() ?? '?';
 
@@ -71,6 +79,39 @@ export default function SettingsTabScreen() {
       </View>
 
       {/* Settings sections */}
+      <SettingsSection header="Appearance">
+        <View style={styles.segmentedRow}>
+          {THEME_OPTIONS.map((option) => {
+            const active = themePreference === option.value;
+            return (
+              <Pressable
+                key={option.value}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: active }}
+                onPress={() => setThemePreference(option.value)}
+                style={[
+                  styles.segment,
+                  {
+                    backgroundColor: active ? t.color.accent : 'transparent',
+                    borderColor: active ? t.color.accent : t.color.border,
+                  },
+                ]}>
+                <Text
+                  style={[
+                    styles.segmentLabel,
+                    {
+                      color: active ? '#ffffff' : t.color.textSecondary,
+                      fontFamily: active ? t.typeface.uiSemibold : t.typeface.ui,
+                    },
+                  ]}>
+                  {option.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </SettingsSection>
+
       <SettingsSection header="Profile">
         <SettingsRow
           icon="person-outline"
@@ -162,5 +203,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
     paddingBottom: 8,
+  },
+  segmentedRow: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  segment: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  segmentLabel: {
+    fontSize: 14,
   },
 });
