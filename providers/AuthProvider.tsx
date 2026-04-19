@@ -4,6 +4,7 @@ import type { Session, User } from '@supabase/supabase-js';
 
 import { getSupabaseClient, getSupabaseConfigError } from '@/lib/supabase/client';
 import { getAssessmentStorage } from '@/lib/storage/assessmentStorage';
+import { ensureProfile } from '@/lib/repositories/profiles';
 
 const ASSESSMENT_STORAGE_KEYS = [
   'nicotine.assessment.session.v1',
@@ -96,6 +97,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       subscription.subscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    const client = getSupabaseClient();
+    if (!client) return;
+    // Trigger auto-creates profiles for new sign-ups; this covers users
+    // that existed before the trigger migration. Safe to call repeatedly.
+    void ensureProfile(client, user.id);
+  }, [user?.id]);
 
   const signIn = async (email: string, password: string): Promise<AuthResult> => {
     const client = getSupabaseClient();

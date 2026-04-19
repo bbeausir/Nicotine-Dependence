@@ -1,9 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
+import type { Database } from '@/lib/supabase/database.types';
 import { createChunkedSecureStoreAdapter } from '@/lib/supabase/secureAuthStorage';
 
-let client: SupabaseClient | null = null;
+export type AppSupabaseClient = SupabaseClient<Database>;
+
+let client: AppSupabaseClient | null = null;
 
 /** Avoid importing `react-native` here so Node/Vitest can load this module without RN's Flow entry. */
 function isExpoWeb(): boolean {
@@ -35,7 +38,7 @@ export function getSupabaseConfigError(): string | null {
   return 'Supabase is not configured. Add EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY.';
 }
 
-export function getSupabaseClient(): SupabaseClient | null {
+export function getSupabaseClient(): AppSupabaseClient | null {
   if (client) {
     return client;
   }
@@ -45,7 +48,7 @@ export function getSupabaseClient(): SupabaseClient | null {
     return null;
   }
 
-  client = createClient(url, anonKey, {
+  client = createClient<Database>(url, anonKey, {
     auth: {
       storage: getAuthStorage(),
       autoRefreshToken: true,

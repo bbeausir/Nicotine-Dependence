@@ -8,7 +8,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "db:types": "supabase gen types typescript --linked > lib/supabase/database.types.ts"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
@@ -46,6 +47,7 @@
     "@types/node": "^25.6.0",
     "@types/react": "~19.1.0",
     "react-test-renderer": "19.1.0",
+    "supabase": "^2.92.1",
     "typescript": "~5.9.2",
     "vitest": "^4.1.4"
   },

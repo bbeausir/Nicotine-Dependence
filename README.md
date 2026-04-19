@@ -90,18 +90,32 @@ Without these values, the app still loads, but auth actions will surface a confi
 
 The current durable backend model is intentionally small:
 
-- `profiles`: one app-owned profile row per Supabase auth user.
+- `profiles`: one app-owned profile row per Supabase auth user. Auto-created by the `on_auth_user_created` trigger on `auth.users`.
 - `onboarding_profiles`: one onboarding assessment snapshot per user.
 
-Onboarding is treated as a setup snapshot, not an ongoing assessment or tracking history. The app still needs repository functions and flow wiring before completed onboarding data syncs to Supabase.
+Onboarding is treated as a setup snapshot, not an ongoing assessment or tracking history.
 
-For database work, use the Supabase CLI and create migrations rather than editing the remote database manually:
+App code accesses the database through `lib/repositories/*` — thin, testable functions that take the Supabase client as an argument. Do not call `supabase.from(...)` from components or providers directly.
+
+### Migrations
+
+Create a new migration rather than editing the remote database manually:
 
 ```bash
 npx supabase@latest migration new <descriptive_name>
 ```
 
-Then apply migrations through the linked Supabase project workflow when the project is configured.
+Apply migrations through the linked Supabase project workflow when the project is configured.
+
+### TypeScript types
+
+`lib/supabase/database.types.ts` mirrors the schema. Regenerate after every migration:
+
+```bash
+npm run db:types
+```
+
+This requires a locally linked Supabase project (`npx supabase@latest link --project-ref <ref>`).
 
 ## Getting Started
 

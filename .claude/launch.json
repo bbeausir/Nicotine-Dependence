@@ -1,0 +1,29 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Expo (Universal)",
+      "runtimeExecutable": "/Users/benbeausir/Documents/Projects/nicotine-app/node_modules/.bin/expo",
+      "runtimeArgs": ["start"],
+      "port": 8081
+    },
+    {
+      "name": "Expo Web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "web"],
+      "port": 8081
+    },
+    {
+      "name": "Expo iOS",
+      "runtimeExecutable": "/Users/benbeausir/Documents/Projects/nicotine-app/node_modules/.bin/expo",
+      "runtimeArgs": ["start", "--ios"],
+      "port": 8081
+    },
+    {
+      "name": "Expo Android",
+      "runtimeExecutable": "/Users/benbeausir/Documents/Projects/nicotine-app/node_modules/.bin/expo",
+      "runtimeArgs": ["start", "--android"],
+      "port": 8081
+    }
+  ]
+}
