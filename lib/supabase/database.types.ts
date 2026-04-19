@@ -39,6 +39,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      cravings: {
+        Row: {
+          id: string
+          intensity: number
+          logged_at: string
+          notes: string | null
+          triggers: string[]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          intensity: number
+          logged_at?: string
+          notes?: string | null
+          triggers?: string[]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          intensity?: number
+          logged_at?: string
+          notes?: string | null
+          triggers?: string[]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cravings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       onboarding_profiles: {
         Row: {
           answers: Json
@@ -77,17 +112,23 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          daily_cost: number | null
           id: string
+          quit_date: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
+          daily_cost?: number | null
           id: string
+          quit_date?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
+          daily_cost?: number | null
           id?: string
+          quit_date?: string | null
           updated_at?: string
         }
         Relationships: []

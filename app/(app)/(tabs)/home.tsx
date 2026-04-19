@@ -1,24 +1,57 @@
-import { StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, G, Polyline, Rect } from 'react-native-svg';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import Svg, { Circle, Polyline, Rect } from 'react-native-svg';
 
 import { PrimaryButton } from '@/components/ui/PrimaryButton';
 import { Screen } from '@/components/ui/Screen';
 import { useColorScheme } from '@/components/useColorScheme';
+import { LogCravingSheet } from '@/features/home/components/LogCravingSheet';
+import { useQuitStats } from '@/features/home/useQuitStats';
+import { useProfile } from '@/features/profile/useProfile';
 import { getTokens } from '@/theme/tokens';
 
 const RING_SIZE = 200;
 const RING_STROKE = 10;
 
-// 14 days, next milestone at 16 (2 weeks)
-const DAYS_FREE = 14;
-const MILESTONE_DAYS = 16;
+function formatMoney(value: number): string {
+  return `$${value.toFixed(2)}`;
+}
 
 export default function HomeTabScreen() {
   const scheme = useColorScheme();
   const t = getTokens(scheme);
+  const router = useRouter();
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const { profile, isLoading } = useProfile();
+  const stats = useQuitStats(profile?.quit_date ?? null, profile?.daily_cost ?? null);
 
   const center = RING_SIZE / 2;
   const r = (RING_SIZE - RING_STROKE) / 2;
+
+  const heroPrimary =
+    stats === null
+      ? '—'
+      : stats.stage === 'countdown'
+        ? String(stats.daysUntilQuit)
+        : String(stats.daysFree);
+  const heroUnit = stats?.stage === 'countdown' ? 'days to go' : 'days';
+  const heroLabel =
+    stats === null
+      ? 'Set your quit date to start tracking'
+      : stats.stage === 'countdown'
+        ? 'Until your quit date'
+        : 'Days Nicotine Free';
+
+  const moneyText =
+    stats?.moneySaved !== undefined && stats?.moneySaved !== null
+      ? formatMoney(stats.moneySaved)
+      : '—';
+  const milestoneText = stats?.nextMilestone
+    ? `${stats.nextMilestone.daysAway} ${stats.nextMilestone.daysAway === 1 ? 'Day' : 'Days'} to ${stats.nextMilestone.label}`
+    : stats?.stage === 'free'
+      ? 'You’ve passed every milestone'
+      : '—';
 
   return (
     <Screen scroll contentContainerStyle={styles.content}>
@@ -28,7 +61,7 @@ export default function HomeTabScreen() {
           Hi, Ben
         </Text>
         <Text style={[styles.subgreeting, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
-          Keep going strong!
+          {stats?.stage === 'countdown' ? 'Almost there.' : 'Keep going strong!'}
         </Text>
       </View>
 
@@ -56,19 +89,35 @@ export default function HomeTabScreen() {
           </Svg>
         </View>
         <View style={[StyleSheet.absoluteFill, styles.ringCenter]} pointerEvents="none">
-          <View style={styles.dayRow}>
-            <Text style={[styles.dayCount, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
-              {DAYS_FREE}
-            </Text>
-            <Text style={[styles.dayUnit, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
-              {' '}days
-            </Text>
-          </View>
-          <Text style={[styles.dayLabel, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
-            Days Nicotine Free
-          </Text>
+          {isLoading ? (
+            <ActivityIndicator color={t.color.textMuted} />
+          ) : (
+            <>
+              <View style={styles.dayRow}>
+                <Text style={[styles.dayCount, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
+                  {heroPrimary}
+                </Text>
+                {stats !== null ? (
+                  <Text style={[styles.dayUnit, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
+                    {' '}{heroUnit}
+                  </Text>
+                ) : null}
+              </View>
+              <Text
+                style={[styles.dayLabel, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}
+                numberOfLines={2}>
+                {heroLabel}
+              </Text>
+            </>
+          )}
         </View>
       </View>
+
+      {stats === null && !isLoading ? (
+        <PrimaryButton onPress={() => router.push('/settings/profile')} variant="secondary">
+          Set quit date
+        </PrimaryButton>
+      ) : null}
 
       {/* Stats row */}
       <View style={styles.statsRow}>
@@ -77,7 +126,7 @@ export default function HomeTabScreen() {
             $ Money Saved
           </Text>
           <Text style={[styles.statValue, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
-            $152.50
+            {moneyText}
           </Text>
         </View>
 
@@ -86,7 +135,7 @@ export default function HomeTabScreen() {
             ◎ Next Milestone
           </Text>
           <Text style={[styles.statValueSmall, { color: t.color.textPrimary, fontFamily: t.typeface.uiSemibold }]}>
-            2 Days to 2 Weeks
+            {milestoneText}
           </Text>
         </View>
       </View>
@@ -148,7 +197,9 @@ export default function HomeTabScreen() {
       </View>
 
       {/* CTA */}
-      <PrimaryButton onPress={() => {}}>Log a Craving</PrimaryButton>
+      <PrimaryButton onPress={() => setSheetOpen(true)}>Log a Craving</PrimaryButton>
+
+      <LogCravingSheet visible={sheetOpen} onDismiss={() => setSheetOpen(false)} />
     </Screen>
   );
 }
@@ -190,6 +241,7 @@ const styles = StyleSheet.create({
   ringCenter: {
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 16,
   },
   dayRow: {
     flexDirection: 'row',
@@ -208,6 +260,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     marginTop: 2,
+    textAlign: 'center',
   },
   statsRow: {
     flexDirection: 'row',
