@@ -26,7 +26,7 @@ export default function AppGroupLayout() {
   }
 
   return (
-    <Stack>
+    <Stack screenOptions={{ headerBackTitleVisible: false }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="settings/profile" options={{ title: 'Edit Profile' }} />
       <Stack.Screen name="settings/notifications" options={{ title: 'Notifications' }} />

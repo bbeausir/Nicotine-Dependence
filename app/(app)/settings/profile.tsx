@@ -214,6 +214,7 @@ export default function ProfileSettingsScreen() {
                 display="spinner"
                 onChange={handleDateChange}
                 textColor={t.color.textPrimary}
+                minimumDate={new Date(1959, 0, 1)}
               />
             </Pressable>
           </Pressable>
@@ -226,6 +227,7 @@ export default function ProfileSettingsScreen() {
           mode="date"
           display="calendar"
           onChange={handleDateChange}
+          minimumDate={new Date(1959, 0, 1)}
         />
       )}
     </Screen>
