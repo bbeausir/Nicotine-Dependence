@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 
 import { FormError } from '@/components/ui/FormError';
@@ -38,29 +39,8 @@ export default function ProfileSettingsScreen() {
     }
   }, [profile]);
 
-  const openDatePicker = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const DatePickerAndroid = require('react-native').DatePickerAndroid;
-        const result = await DatePickerAndroid.open({
-          date: tempDate,
-          mode: 'calendar',
-        });
-        if (result.action === DatePickerAndroid.dateSetAction) {
-          const date = new Date(result.year, result.month, result.day);
-          setTempDate(date);
-          formatAndSetDate(date);
-          setDatePickerOpen(false);
-        }
-      } catch (error: unknown) {
-        const err = error as { code?: string };
-        if (err.code !== 'dismissedAction') {
-          console.error('DatePicker Error:', err.code);
-        }
-      }
-    } else {
-      setDatePickerOpen(true);
-    }
+  const openDatePicker = () => {
+    setDatePickerOpen(true);
   };
 
   const formatAndSetDate = (date: Date) => {
@@ -69,6 +49,22 @@ export default function ProfileSettingsScreen() {
     const day = String(date.getDate()).padStart(2, '0');
     setQuitDateInput(`${year}-${month}-${day}`);
     setSubmitError(null);
+  };
+
+  const handleDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    // Android: picker closes automatically on select or dismiss
+    if (Platform.OS === 'android') {
+      setDatePickerOpen(false);
+      if (event.type === 'set' && selectedDate) {
+        setTempDate(selectedDate);
+        formatAndSetDate(selectedDate);
+      }
+      return;
+    }
+    // iOS: updates tempDate as user scrolls; confirm via Done button
+    if (selectedDate) {
+      setTempDate(selectedDate);
+    }
   };
 
   const handleDateConfirm = () => {
@@ -198,29 +194,39 @@ export default function ProfileSettingsScreen() {
           transparent
           animationType="slide"
           onRequestClose={() => setDatePickerOpen(false)}>
-          <View style={[styles.datePickerModal, { backgroundColor: t.color.surface }]}>
-            <View style={[styles.datePickerHeader, { borderBottomColor: t.color.border }]}>
-              <Pressable onPress={() => setDatePickerOpen(false)}>
-                <Text style={[styles.datePickerCancel, { color: t.color.accent }]}>Cancel</Text>
-              </Pressable>
-              <Pressable onPress={handleDateConfirm}>
-                <Text style={[styles.datePickerConfirm, { color: t.color.accent, fontFamily: t.typeface.uiSemibold }]}>
-                  Done
-                </Text>
-              </Pressable>
-            </View>
-            {(() => {
-              const DatePickerIOS = require('react-native').DatePickerIOS;
-              return (
-                <DatePickerIOS
-                  date={tempDate}
-                  onDateChange={setTempDate}
-                  mode="date"
-                />
-              );
-            })()}
-          </View>
+          <Pressable style={styles.datePickerBackdrop} onPress={() => setDatePickerOpen(false)}>
+            <Pressable
+              style={[styles.datePickerSheet, { backgroundColor: t.color.surface }]}
+              onPress={(e) => e.stopPropagation()}>
+              <View style={[styles.datePickerHeader, { borderBottomColor: t.color.border }]}>
+                <Pressable onPress={() => setDatePickerOpen(false)}>
+                  <Text style={[styles.datePickerCancel, { color: t.color.accent }]}>Cancel</Text>
+                </Pressable>
+                <Pressable onPress={handleDateConfirm}>
+                  <Text style={[styles.datePickerConfirm, { color: t.color.accent, fontFamily: t.typeface.uiSemibold }]}>
+                    Done
+                  </Text>
+                </Pressable>
+              </View>
+              <DateTimePicker
+                value={tempDate}
+                mode="date"
+                display="spinner"
+                onChange={handleDateChange}
+                textColor={t.color.textPrimary}
+              />
+            </Pressable>
+          </Pressable>
         </Modal>
+      )}
+
+      {Platform.OS === 'android' && datePickerOpen && (
+        <DateTimePicker
+          value={tempDate}
+          mode="date"
+          display="calendar"
+          onChange={handleDateChange}
+        />
       )}
     </Screen>
   );
@@ -270,9 +276,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  datePickerModal: {
+  datePickerBackdrop: {
     flex: 1,
     justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  datePickerSheet: {
+    paddingBottom: 24,
   },
   datePickerHeader: {
     flexDirection: 'row',
