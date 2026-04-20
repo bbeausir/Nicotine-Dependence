@@ -1,0 +1,52 @@
+<svg width="430" height="932" viewBox="0 0 430 932" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="bg" x1="215" y1="0" x2="215" y2="932" gradientUnits="userSpaceOnUse"><stop stop-color="#121722"/><stop offset="1" stop-color="#0B0E14"/></linearGradient></defs>
+  <rect width="430" height="932" rx="38" fill="url(#bg)"/>
+<circle cx="52" cy="160" r="150" fill="#B5935B" opacity="0.08"/>
+<circle cx="390" cy="720" r="170" fill="#B5935B" opacity="0.055"/>
+<rect x="163" y="18" width="104" height="8" rx="4" fill="#252D3A"/>
+<text x="28" y="64" fill="#B5935B" font-size="13" font-family="Arial, sans-serif" font-weight="700" text-anchor="start" letter-spacing="1">HOME VIEW 1</text>
+<text x="28" y="104" fill="#FFFFFF" font-size="31" font-family="Georgia, serif" font-weight="500" text-anchor="start" >Today at a glance</text>
+<text x="28" y="133" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif" font-weight="400" text-anchor="start" >A calm command center for the next helpful move.</text>
+<rect x="24" y="172" width="382" height="176" rx="24" fill="#121820" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<text x="48" y="208" fill="#B5935B" font-size="12" font-family="Arial, sans-serif" font-weight="700" text-anchor="start" letter-spacing="1">DAY 6</text>
+<text x="48" y="242" fill="#FFFFFF" font-size="23" font-family="Georgia, serif" font-weight="500" text-anchor="start" >You have a steady start</text>
+<text x="48" y="272" fill="#A8B0BD" font-size="14" font-family="Arial, sans-serif" font-weight="400" text-anchor="start" >Craving risk is moderate this afternoon.</text>
+<text x="48" y="292" fill="#A8B0BD" font-size="14" font-family="Arial, sans-serif" font-weight="400" text-anchor="start" >A short check-in will tune today’s plan.</text>
+<rect x="48" y="298" width="88" height="32" rx="16.0" fill="#202A35" fill-opacity="1"/><text x="92.0" y="319.0" fill="#B5935B" font-size="14" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >6-day streak</text>
+<rect x="146" y="298" width="104" height="32" rx="16.0" fill="#2A241B" fill-opacity="1"/><text x="198.0" y="319.0" fill="#F2D39C" font-size="14" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >Risk: Medium</text>
+<rect x="260" y="298" width="104" height="32" rx="16.0" fill="#182A20" fill-opacity="1"/><text x="312.0" y="319.0" fill="#A7D5AF" font-size="14" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >3 wins logged</text>
+<rect x="24" y="368" width="382" height="130" rx="22" fill="#121820" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<text x="48" y="405" fill="#FFFFFF" font-size="23" font-family="Georgia, serif" font-weight="500" text-anchor="start" >Daily check-in</text>
+<text x="48" y="435" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif" font-weight="400" text-anchor="start" >How strong is the pull right now?</text>
+<rect x="48" y="462" width="160" height="42" rx="999" fill="#B5935B" fill-opacity="1" stroke="rgba(255,255,255,0.28)" stroke-width="1"/><text x="128.0" y="489.0" fill="#FFFFFF" font-size="16" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >Log check-in</text>
+<rect x="222" y="462" width="132" height="42" rx="999" fill="#1A222C" fill-opacity="1" stroke="#252D3A" stroke-width="1"/><text x="288.0" y="488.0" fill="#FFFFFF" font-size="13" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >Skip for now</text>
+<rect x="24" y="518" width="382" height="120" rx="22" fill="#121820" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<text x="48" y="554" fill="#FFFFFF" font-size="22" font-family="Georgia, serif" font-weight="500" text-anchor="start" >Next best action</text>
+<text x="48" y="584" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif" font-weight="400" text-anchor="start" >Take a 60-second pause before the first reach</text>
+<text x="48" y="607" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif" font-weight="400" text-anchor="start" >during your after-work transition.</text>
+<rect x="48" y="606" width="118" height="38" rx="999" fill="#B5935B" fill-opacity="1" stroke="#252D3A" stroke-width="1"/><text x="107.0" y="630.0" fill="#FFFFFF" font-size="13" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >Start pause</text>
+<rect x="24" y="658" width="184" height="98" rx="20" fill="#121820" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<text x="44" y="693" fill="#FFFFFF" font-size="18" font-family="Arial, sans-serif" font-weight="600" text-anchor="start" >Week focus</text>
+<text x="44" y="720" fill="#A8B0BD" font-size="13" font-family="Arial, sans-serif" font-weight="400" text-anchor="start" >Interrupt one</text>
+<text x="44" y="738" fill="#A8B0BD" font-size="13" font-family="Arial, sans-serif" font-weight="400" text-anchor="start" >automatic reach.</text>
+<rect x="222" y="658" width="184" height="98" rx="20" fill="#121820" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<text x="242" y="693" fill="#FFFFFF" font-size="18" font-family="Arial, sans-serif" font-weight="600" text-anchor="start" >Quick SOS</text>
+<text x="242" y="720" fill="#A8B0BD" font-size="13" font-family="Arial, sans-serif" font-weight="400" text-anchor="start" >Grounding tool</text>
+<text x="242" y="738" fill="#A8B0BD" font-size="13" font-family="Arial, sans-serif" font-weight="400" text-anchor="start" >ready anytime.</text>
+<rect x="20" y="790" width="390" height="110" rx="28" fill="#11161E" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<rect x="15" y="812" width="62" height="64" rx="18" fill="#17202B" fill-opacity="1" stroke="#1F2935" stroke-width="1"/>
+<text x="46" y="838" fill="#B5935B" font-size="22" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >⌂</text>
+<text x="46" y="862" fill="#FFFFFF" font-size="11" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >Home</text>
+<rect x="99" y="812" width="62" height="64" rx="18" fill="transparent" fill-opacity="1"/>
+<text x="130" y="838" fill="#A8B0BD" font-size="22" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >◦</text>
+<text x="130" y="862" fill="#A8B0BD" font-size="11" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >Social</text>
+<rect x="184" y="812" width="62" height="64" rx="18" fill="#171F2A" fill-opacity="1"/>
+<text x="215" y="838" fill="#A8B0BD" font-size="22" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >!</text>
+<text x="215" y="862" fill="#A8B0BD" font-size="11" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >SOS</text>
+<rect x="269" y="812" width="62" height="64" rx="18" fill="transparent" fill-opacity="1"/>
+<text x="300" y="838" fill="#A8B0BD" font-size="22" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >□</text>
+<text x="300" y="862" fill="#A8B0BD" font-size="11" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >Resources</text>
+<rect x="353" y="812" width="62" height="64" rx="18" fill="transparent" fill-opacity="1"/>
+<text x="384" y="838" fill="#A8B0BD" font-size="22" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >⚙</text>
+<text x="384" y="862" fill="#A8B0BD" font-size="11" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >Settings</text>
+</svg>

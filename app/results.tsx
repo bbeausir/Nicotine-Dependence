@@ -48,8 +48,7 @@ export default function ResultsScreen() {
 
       <View style={[styles.card, { backgroundColor: t.color.surface, borderColor: t.color.border }]}>
         <ScoreRow label="Dependence" value={`${result.dependenceScore}`} tokens={t} />
-        <ScoreRow label="Craving reactivity" value={result.cravingReactivityLabel} tokens={t} />
-        <ScoreRow label="Regulation confidence" value={result.regulationConfidenceLabel} tokens={t} />
+        <ScoreRow label="Dependence level" value={result.dependenceBand} tokens={t} />
       </View>
 
       <Text style={[styles.sectionTitle, { color: t.color.textPrimary, fontFamily: t.typeface.uiSemibold }]}>

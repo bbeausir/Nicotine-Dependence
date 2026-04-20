@@ -1,37 +1,16 @@
-/** PRD §10.3 — labels for assessment UI. */
-
-export const sectionTitles = [
-  'Utilization',
-  'Environment & triggers',
-  'Cognitive & identity',
-  'Historical resilience',
-  'Mission',
-] as const;
-
 export const assessmentCopy = {
-  nicotineForms: {
-    prompt: 'What form(s) of nicotine are you currently using?',
+  usageFrequency: {
+    prompt: 'How often are you typically using nicotine?',
     options: [
-      { id: 'pouch', label: 'Pouch' },
-      { id: 'vape', label: 'Vape' },
-      { id: 'dip', label: 'Dip' },
-      { id: 'cigarette', label: 'Cigarette' },
-      { id: 'other', label: 'Other' },
-    ],
-  },
-  dailyUseEvents: {
-    prompt: 'On an average day, how many nicotine-use events occur?',
-    options: [
-      { id: '1_2', label: '1–2' },
-      { id: '3_4', label: '3–4' },
-      { id: '5_7', label: '5–7' },
-      { id: '8_10', label: '8–10' },
-      { id: '11_15', label: '11–15' },
-      { id: '16plus', label: '16+' },
+      { id: 'lt_weekly', label: 'Less than once a week' },
+      { id: 'weekly_not_daily', label: 'Weekly, but not daily' },
+      { id: '1_2_day', label: 'One or two times per day' },
+      { id: '3_5_day', label: 'Three to five times per day' },
+      { id: '6plus_day', label: 'Six or more times per day' },
     ],
   },
   firstUseAfterWake: {
-    prompt: 'How long after waking do you reach for your first dose?',
+    prompt: 'How soon after waking do you first use nicotine?',
     options: [
       { id: '5min', label: 'Within 5 minutes' },
       { id: '15min', label: 'Within 15 minutes' },
@@ -42,79 +21,65 @@ export const assessmentCopy = {
       { id: 'rarely', label: 'Rarely' },
     ],
   },
-  urgeEnvironments: {
-    prompt: 'In which environments is the urge strongest?',
-    options: [
-      { id: 'work', label: 'Work / studying' },
-      { id: 'commute', label: 'Commuting / driving' },
-      { id: 'social', label: 'Social / drinking' },
-      { id: 'post_meals', label: 'Post-meals' },
-      { id: 'transitions', label: 'Transitions between tasks' },
-      { id: 'habitual_all', label: 'Habitual use / all of the above' },
-    ],
-  },
-  emotionalPrecursor: {
-    prompt: 'Which internal state most frequently precedes an automatic reach?',
-    options: [
-      { id: 'stress', label: 'Stress / anxiety' },
-      { id: 'boredom', label: 'Boredom / under-stimulation' },
-      { id: 'lack_focus', label: 'Lack of focus' },
-      { id: 'irritability', label: 'Irritability' },
-    ],
-  },
-  highStakesReliance: {
-    prompt: 'Does nicotine feel necessary to navigate high-stakes social or professional interactions?',
+  hasTriedToQuit: {
+    prompt: 'Have you tried to quit in the past?',
     options: [
       { id: 'no', label: 'No' },
-      { id: 'sometimes', label: 'Sometimes' },
       { id: 'yes', label: 'Yes' },
     ],
   },
-  performanceBelief: {
-    prompt: 'Do you believe nicotine is a primary driver of your professional performance or focus?',
-    options: [
-      { id: 'no', label: 'No' },
-      { id: 'somewhat', label: 'Somewhat' },
-      { id: 'yes', label: 'Yes' },
-    ],
-  },
-  reductionConcern: {
-    prompt: 'What is your primary concern regarding reduced usage?',
-    options: [
-      { id: 'focus', label: 'Loss of focus' },
-      { id: 'brain_fog', label: 'Brain fog' },
-      { id: 'irritability_social', label: 'Irritability / social friction' },
-      { id: 'weight', label: 'Weight gain' },
-    ],
-  },
-  selfImageConflict: {
-    prompt: 'How much does being a nicotine user conflict with your self-image as a high performer?',
-    sliderHint: '1 = not at all · 10 = strongly',
-  },
-  pastAttempts: {
-    prompt: 'How many times have you attempted to reduce or quit in the last 12 months?',
-    options: [
-      { id: '0', label: '0' },
-      { id: '1', label: '1' },
-      { id: '2', label: '2' },
-      { id: '3plus', label: '3+' },
-    ],
-  },
-  crashReason: {
-    prompt: 'In past attempts, what was the primary cause of system crash?',
+  pastRelapseReason: {
+    prompt: 'In past attempts, what has usually pulled you back?',
     options: [
       { id: 'stress_event', label: 'Extreme stress event' },
       { id: 'social', label: 'Social pressure' },
       { id: 'boredom', label: 'Boredom' },
       { id: 'cravings', label: 'Persistent cravings' },
+      { id: 'other', label: 'Something else' },
     ],
   },
-  sprintGoal: {
-    prompt: 'What is your primary objective for this 14-day sprint?',
+  firstUseAge: {
+    prompt: 'Around what age did you first use nicotine?',
     options: [
-      { id: 'abstinence', label: 'Total abstinence' },
-      { id: 'half', label: '50% reduction' },
-      { id: 'awareness', label: 'Pattern identification / awareness' },
+      { id: 'le_12', label: '12 or younger' },
+      { id: '13_16', label: '13 to 16' },
+      { id: '17_24', label: '17 to 24' },
+      { id: '25plus', label: '25 or older' },
+    ],
+  },
+  focusDifficulty: {
+    prompt: 'Do you find it difficult to perform or focus without nicotine?',
+    options: [
+      { id: 'rarely', label: 'Rarely or never' },
+      { id: 'occasionally', label: 'Occasionally' },
+      { id: 'frequently', label: 'Frequently' },
+    ],
+  },
+  emotionalCoping: {
+    prompt: 'Do you use nicotine as a way to cope with emotional discomfort or stress?',
+    options: [
+      { id: 'rarely', label: 'Rarely or never' },
+      { id: 'occasionally', label: 'Occasionally' },
+      { id: 'frequently', label: 'Frequently' },
+    ],
+  },
+  boredomUse: {
+    prompt: 'Do you use nicotine out of boredom?',
+    options: [
+      { id: 'rarely', label: 'Rarely or never' },
+      { id: 'occasionally', label: 'Occasionally' },
+      { id: 'frequently', label: 'Frequently' },
+    ],
+  },
+  nicotineForms: {
+    prompt: 'What form(s) of nicotine are you currently using?',
+    options: [
+      { id: 'pouch', label: 'Pouches' },
+      { id: 'vape', label: 'Vape' },
+      { id: 'dip', label: 'Dip' },
+      { id: 'cigarette', label: 'Cigarettes' },
+      { id: 'cigar', label: 'Cigars' },
+      { id: 'other', label: 'Something else' },
     ],
   },
 } as const;

@@ -62,6 +62,10 @@ describe('getProfile', () => {
       updated_at: '2026-04-18T00:00:00Z',
       quit_date: '2026-04-04',
       daily_cost: 12.5,
+      display_name: null,
+      age_band: null,
+      gender: null,
+      attribution: null,
     };
     const maybeSingle = vi.fn().mockResolvedValue({ data: profile, error: null });
     const { client, eq, select } = makeSelectClient(maybeSingle);
@@ -100,6 +104,10 @@ describe('updateProfile', () => {
       updated_at: '2026-04-18T00:00:00Z',
       quit_date: '2026-04-10',
       daily_cost: 9,
+      display_name: null,
+      age_band: null,
+      gender: null,
+      attribution: null,
     };
     const single = vi.fn().mockResolvedValue({ data: updated, error: null });
     const { client, update, eq } = makeUpdateClient(single);
@@ -118,6 +126,10 @@ describe('updateProfile', () => {
       updated_at: '2026-04-18T00:00:00Z',
       quit_date: null,
       daily_cost: null,
+      display_name: null,
+      age_band: null,
+      gender: null,
+      attribution: null,
     };
     const single = vi.fn().mockResolvedValue({ data: updated, error: null });
     const { client, update } = makeUpdateClient(single);

@@ -111,22 +111,34 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age_band: string | null
+          attribution: string | null
           created_at: string
           daily_cost: number | null
+          display_name: string | null
+          gender: string | null
           id: string
           quit_date: string | null
           updated_at: string
         }
         Insert: {
+          age_band?: string | null
+          attribution?: string | null
           created_at?: string
           daily_cost?: number | null
+          display_name?: string | null
+          gender?: string | null
           id: string
           quit_date?: string | null
           updated_at?: string
         }
         Update: {
+          age_band?: string | null
+          attribution?: string | null
           created_at?: string
           daily_cost?: number | null
+          display_name?: string | null
+          gender?: string | null
           id?: string
           quit_date?: string | null
           updated_at?: string

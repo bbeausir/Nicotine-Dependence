@@ -10,7 +10,7 @@ import {
   type OnboardingDraftValues,
 } from '@/features/onboarding/schema/onboardingAnswers';
 
-const STORAGE_KEY = 'nicotine.onboardingDraft.v1';
+const STORAGE_KEY = 'nicotine.onboardingDraft.v2';
 const storage = getAssessmentStorage();
 
 export function parseDraftPayload(raw: string): OnboardingDraftValues | null {

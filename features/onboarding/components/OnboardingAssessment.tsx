@@ -1,4 +1,3 @@
-import Slider from '@react-native-community/slider';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import {
@@ -9,48 +8,42 @@ import {
   type DeepPartial,
   type FieldPath,
 } from 'react-hook-form';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AssessmentProgressRing } from '@/components/ui/AssessmentProgressRing';
 import { PrimaryButton } from '@/components/ui/PrimaryButton';
 import { Screen } from '@/components/ui/Screen';
-import { assessmentCopy, sectionTitles } from '@/features/onboarding/content/assessmentCopy';
+import { useColorScheme } from '@/components/useColorScheme';
+import { assessmentCopy } from '@/features/onboarding/content/assessmentCopy';
 import { useAssessmentDraft } from '@/features/onboarding/hooks/useAssessmentDraft';
 import {
   defaultOnboardingAnswers,
   onboardingAnswersSchema,
-  type OnboardingDraftValues,
   type OnboardingAnswers,
+  type OnboardingDraftValues,
 } from '@/features/onboarding/schema/onboardingAnswers';
 import {
   getAssessmentSequence,
   getFirstIncompleteQuestionIndex,
-  getSectionForField,
   validateCurrentField,
 } from '@/features/onboarding/schema/stepConfig';
 import { calculateScores } from '@/features/onboarding/scoring/calculateScores';
 import { AnalyticsEvents } from '@/lib/analytics/events';
 import { track } from '@/lib/analytics/track';
 import { useAssessment } from '@/providers/AssessmentProvider';
-import { useColorScheme } from '@/components/useColorScheme';
 import { getTokens } from '@/theme/tokens';
 import type { ZodError } from 'zod';
 
-function applyZodErrors(setError: (name: FieldPath<OnboardingAnswers>, err: { message: string }) => void, zerr: ZodError) {
+function applyZodErrors(
+  setError: (name: FieldPath<OnboardingAnswers>, err: { message: string }) => void,
+  zerr: ZodError,
+) {
   for (const issue of zerr.issues) {
     const key = issue.path[0];
     if (typeof key === 'string') {
       setError(key as FieldPath<OnboardingAnswers>, { message: issue.message });
     }
   }
-}
-
-function setFieldErrorFromValidation(
-  setError: (name: FieldPath<OnboardingAnswers>, err: { message: string }) => void,
-  field: FieldPath<OnboardingAnswers>,
-  message: string,
-) {
-  setError(field, { message });
 }
 
 function OptionRadio({ selected, accent }: { selected: boolean; accent: string }) {
@@ -64,7 +57,7 @@ function OptionRadio({ selected, accent }: { selected: boolean; accent: string }
 export function OnboardingAssessment() {
   const t = getTokens(useColorScheme());
   const router = useRouter();
-  const { setSession } = useAssessment();
+  const { setPendingAnswers } = useAssessment();
   const [questionIndex, setQuestionIndex] = useState(0);
 
   const {
@@ -92,10 +85,10 @@ export function OnboardingAssessment() {
   }, []);
 
   useEffect(() => {
-    if (values.pastAttempts === '0') {
-      setValue('crashReason', undefined);
+    if (values.hasTriedToQuit !== 'yes') {
+      setValue('pastRelapseReason', undefined);
     }
-  }, [values.pastAttempts, setValue]);
+  }, [values.hasTriedToQuit, setValue]);
 
   useEffect(() => {
     setQuestionIndex((qi) => {
@@ -110,27 +103,16 @@ export function OnboardingAssessment() {
     const seq = getAssessmentSequence(draft);
     const idx = Math.min(questionIndex, Math.max(0, seq.length - 1));
     const currentField = seq[idx];
-    if (!currentField) {
-      return;
-    }
+    if (!currentField) return;
 
     const fieldResult = validateCurrentField(currentField, draft);
     if (!fieldResult.success) {
       const msg = fieldResult.error.issues[0]?.message ?? 'Invalid';
-      setFieldErrorFromValidation(setError, currentField, msg);
+      setError(currentField, { message: msg });
       return;
     }
 
-    const currentSection = getSectionForField(currentField);
     const isLastQuestion = idx >= seq.length - 1;
-    const nextField = !isLastQuestion ? seq[idx + 1] : undefined;
-    const nextSection = nextField !== undefined ? getSectionForField(nextField) : undefined;
-    const shouldTrackSectionComplete =
-      isLastQuestion || (nextSection !== undefined && nextSection !== currentSection);
-    if (shouldTrackSectionComplete) {
-      track(AnalyticsEvents.onboardingSectionCompleted, { sectionIndex: currentSection });
-    }
-
     if (!isLastQuestion) {
       setQuestionIndex(idx + 1);
       return;
@@ -142,12 +124,11 @@ export function OnboardingAssessment() {
       return;
     }
 
-    const result = calculateScores(full.data);
-    setSession(full.data, result);
+    setPendingAnswers(full.data);
     await clearDraft();
     track(AnalyticsEvents.onboardingCompleted);
-    router.replace('/results');
-  }, [clearDraft, clearErrors, getValues, questionIndex, router, setError, setSession]);
+    router.push('/onboarding/almost-there');
+  }, [clearDraft, clearErrors, getValues, questionIndex, router, setError, setPendingAnswers]);
 
   const goBack = useCallback(() => {
     clearErrors();
@@ -158,10 +139,30 @@ export function OnboardingAssessment() {
     }
   }, [clearErrors, questionIndex, router]);
 
+  const onSkip = useCallback(() => {
+    Alert.alert(
+      'Are you sure?',
+      'We use this to make your custom quit plan more accurate.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Skip',
+          style: 'destructive',
+          onPress: () => {
+            track(AnalyticsEvents.onboardingSkipped);
+            void clearDraft();
+            router.replace('/sign-up');
+          },
+        },
+      ],
+    );
+  }, [clearDraft, router]);
+
   const safeIdx = sequence.length === 0 ? 0 : Math.min(questionIndex, sequence.length - 1);
   const currentField = sequence[safeIdx];
-  const sectionIndex = currentField !== undefined ? getSectionForField(currentField) : 0;
   const progress = sequence.length > 0 ? (safeIdx + 1) / sequence.length : 0;
+
+  const isLast = sequence.length > 0 && safeIdx >= sequence.length - 1;
 
   return (
     <Screen scroll contentContainerStyle={styles.screen}>
@@ -182,13 +183,9 @@ export function OnboardingAssessment() {
             ellipsizeMode="tail"
             style={[
               styles.sectionLabel,
-              {
-                color: t.color.accent,
-                fontFamily: t.typeface.uiSemibold,
-                textAlign: 'center',
-              },
+              { color: t.color.accent, fontFamily: t.typeface.uiSemibold },
             ]}>
-            {sectionTitles[sectionIndex]}
+            Assessment
           </Text>
         </View>
         <View style={styles.headerRing}>
@@ -203,23 +200,13 @@ export function OnboardingAssessment() {
         </View>
       </View>
 
-      {currentField === 'nicotineForms' ? (
-        <MultiField
-          control={control}
-          name="nicotineForms"
-          prompt={assessmentCopy.nicotineForms.prompt}
-          options={assessmentCopy.nicotineForms.options}
-          error={errors.nicotineForms?.message}
-          t={t}
-        />
-      ) : null}
-      {currentField === 'dailyUseEvents' ? (
+      {currentField === 'usageFrequency' ? (
         <SingleField
           control={control}
-          name="dailyUseEvents"
-          prompt={assessmentCopy.dailyUseEvents.prompt}
-          options={assessmentCopy.dailyUseEvents.options}
-          error={errors.dailyUseEvents?.message}
+          name="usageFrequency"
+          prompt={assessmentCopy.usageFrequency.prompt}
+          options={assessmentCopy.usageFrequency.options}
+          error={errors.usageFrequency?.message}
           t={t}
         />
       ) : null}
@@ -233,131 +220,84 @@ export function OnboardingAssessment() {
           t={t}
         />
       ) : null}
-      {currentField === 'urgeEnvironments' ? (
+      {currentField === 'hasTriedToQuit' ? (
+        <SingleField
+          control={control}
+          name="hasTriedToQuit"
+          prompt={assessmentCopy.hasTriedToQuit.prompt}
+          options={assessmentCopy.hasTriedToQuit.options}
+          error={errors.hasTriedToQuit?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'pastRelapseReason' ? (
+        <SingleField
+          control={control}
+          name="pastRelapseReason"
+          prompt={assessmentCopy.pastRelapseReason.prompt}
+          options={assessmentCopy.pastRelapseReason.options}
+          error={errors.pastRelapseReason?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'firstUseAge' ? (
+        <SingleField
+          control={control}
+          name="firstUseAge"
+          prompt={assessmentCopy.firstUseAge.prompt}
+          options={assessmentCopy.firstUseAge.options}
+          error={errors.firstUseAge?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'focusDifficulty' ? (
+        <SingleField
+          control={control}
+          name="focusDifficulty"
+          prompt={assessmentCopy.focusDifficulty.prompt}
+          options={assessmentCopy.focusDifficulty.options}
+          error={errors.focusDifficulty?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'emotionalCoping' ? (
+        <SingleField
+          control={control}
+          name="emotionalCoping"
+          prompt={assessmentCopy.emotionalCoping.prompt}
+          options={assessmentCopy.emotionalCoping.options}
+          error={errors.emotionalCoping?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'boredomUse' ? (
+        <SingleField
+          control={control}
+          name="boredomUse"
+          prompt={assessmentCopy.boredomUse.prompt}
+          options={assessmentCopy.boredomUse.options}
+          error={errors.boredomUse?.message}
+          t={t}
+        />
+      ) : null}
+      {currentField === 'nicotineForms' ? (
         <MultiField
           control={control}
-          name="urgeEnvironments"
-          prompt={assessmentCopy.urgeEnvironments.prompt}
-          options={assessmentCopy.urgeEnvironments.options}
-          error={errors.urgeEnvironments?.message}
-          t={t}
-        />
-      ) : null}
-      {currentField === 'emotionalPrecursor' ? (
-        <SingleField
-          control={control}
-          name="emotionalPrecursor"
-          prompt={assessmentCopy.emotionalPrecursor.prompt}
-          options={assessmentCopy.emotionalPrecursor.options}
-          error={errors.emotionalPrecursor?.message}
-          t={t}
-        />
-      ) : null}
-      {currentField === 'highStakesReliance' ? (
-        <SingleField
-          control={control}
-          name="highStakesReliance"
-          prompt={assessmentCopy.highStakesReliance.prompt}
-          options={assessmentCopy.highStakesReliance.options}
-          error={errors.highStakesReliance?.message}
-          t={t}
-        />
-      ) : null}
-      {currentField === 'performanceBelief' ? (
-        <SingleField
-          control={control}
-          name="performanceBelief"
-          prompt={assessmentCopy.performanceBelief.prompt}
-          options={assessmentCopy.performanceBelief.options}
-          error={errors.performanceBelief?.message}
-          t={t}
-        />
-      ) : null}
-      {currentField === 'reductionConcern' ? (
-        <SingleField
-          control={control}
-          name="reductionConcern"
-          prompt={assessmentCopy.reductionConcern.prompt}
-          options={assessmentCopy.reductionConcern.options}
-          error={errors.reductionConcern?.message}
-          t={t}
-        />
-      ) : null}
-      {currentField === 'selfImageConflict' ? (
-        <>
-          <Text style={[styles.prompt, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
-            {assessmentCopy.selfImageConflict.prompt}
-          </Text>
-          <Text style={[styles.hint, { color: t.color.textMuted, fontFamily: t.typeface.ui }]}>
-            {assessmentCopy.selfImageConflict.sliderHint}
-          </Text>
-          <Controller
-            control={control}
-            name="selfImageConflict"
-            render={({ field: { value, onChange } }) => (
-              <View style={styles.sliderBlock}>
-                <Text
-                  style={{
-                    color: t.color.textPrimary,
-                    fontSize: 20,
-                    fontFamily: t.typeface.uiSemibold,
-                  }}>
-                  {value ?? '-'}
-                </Text>
-                <Slider
-                  style={styles.slider}
-                  minimumValue={1}
-                  maximumValue={10}
-                  step={1}
-                  value={value ?? 5}
-                  onSlidingComplete={onChange}
-                  onValueChange={onChange}
-                  minimumTrackTintColor={t.color.accent}
-                  maximumTrackTintColor={t.color.border}
-                  thumbTintColor={t.color.accent}
-                />
-              </View>
-            )}
-          />
-          {errors.selfImageConflict?.message ? (
-            <Text style={styles.err}>{errors.selfImageConflict.message}</Text>
-          ) : null}
-        </>
-      ) : null}
-      {currentField === 'pastAttempts' ? (
-        <SingleField
-          control={control}
-          name="pastAttempts"
-          prompt={assessmentCopy.pastAttempts.prompt}
-          options={assessmentCopy.pastAttempts.options}
-          error={errors.pastAttempts?.message}
-          t={t}
-        />
-      ) : null}
-      {currentField === 'crashReason' ? (
-        <SingleField
-          control={control}
-          name="crashReason"
-          prompt={assessmentCopy.crashReason.prompt}
-          options={assessmentCopy.crashReason.options}
-          error={errors.crashReason?.message}
-          t={t}
-        />
-      ) : null}
-      {currentField === 'sprintGoal' ? (
-        <SingleField
-          control={control}
-          name="sprintGoal"
-          prompt={assessmentCopy.sprintGoal.prompt}
-          options={assessmentCopy.sprintGoal.options}
-          error={errors.sprintGoal?.message}
+          name="nicotineForms"
+          prompt={assessmentCopy.nicotineForms.prompt}
+          options={assessmentCopy.nicotineForms.options}
+          error={errors.nicotineForms?.message}
           t={t}
         />
       ) : null}
 
-      <PrimaryButton onPress={goNext}>
-        {sequence.length > 0 && safeIdx >= sequence.length - 1 ? 'See results' : 'Continue'}
-      </PrimaryButton>
+      <PrimaryButton onPress={goNext}>{isLast ? 'Finish' : 'Continue'}</PrimaryButton>
+
+      <Pressable onPress={onSkip} hitSlop={8} style={styles.skipWrap}>
+        <Text style={[styles.skipText, { color: t.color.textMuted, fontFamily: t.typeface.ui }]}>
+          Skip test
+        </Text>
+      </Pressable>
     </Screen>
   );
 }
@@ -371,7 +311,7 @@ function MultiField({
   t,
 }: {
   control: Control<OnboardingAnswers>;
-  name: 'nicotineForms' | 'urgeEnvironments';
+  name: 'nicotineForms';
   prompt: string;
   options: readonly { id: string; label: string }[];
   error?: string;
@@ -379,7 +319,10 @@ function MultiField({
 }) {
   return (
     <View style={styles.block}>
-      <Text style={[styles.prompt, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>{prompt}</Text>
+      <Text
+        style={[styles.prompt, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
+        {prompt}
+      </Text>
       <Controller
         control={control}
         name={name}
@@ -438,7 +381,7 @@ function SingleField({
   t,
 }: {
   control: Control<OnboardingAnswers>;
-  name: Exclude<keyof OnboardingAnswers, 'nicotineForms' | 'urgeEnvironments' | 'selfImageConflict'>;
+  name: Exclude<keyof OnboardingAnswers, 'nicotineForms'>;
   prompt: string;
   options: readonly { id: string; label: string }[];
   error?: string;
@@ -446,7 +389,10 @@ function SingleField({
 }) {
   return (
     <View style={styles.block}>
-      <Text style={[styles.prompt, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>{prompt}</Text>
+      <Text
+        style={[styles.prompt, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
+        {prompt}
+      </Text>
       <Controller
         control={control}
         name={name}
@@ -501,9 +447,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 4,
   },
-  headerBack: {
-    flexShrink: 0,
-  },
+  headerBack: { flexShrink: 0 },
   headerCenter: {
     flex: 1,
     minWidth: 0,
@@ -519,10 +463,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     letterSpacing: 1.1,
     textTransform: 'uppercase',
+    textAlign: 'center',
   },
   block: { gap: 10, marginBottom: 8 },
-  prompt: { fontSize: 36, lineHeight: 44, marginBottom: 8 },
-  hint: { fontSize: 14, lineHeight: 20 },
+  prompt: { fontSize: 32, lineHeight: 40, marginBottom: 8 },
   options: { gap: 12 },
   option: {
     paddingVertical: 15,
@@ -550,7 +494,13 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
   },
-  sliderBlock: { gap: 8, marginTop: 4 },
-  slider: { width: '100%', height: 44 },
+  skipWrap: {
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  skipText: {
+    fontSize: 14,
+    textDecorationLine: 'underline',
+  },
   err: { color: '#e85d5d', fontSize: 13 },
 });

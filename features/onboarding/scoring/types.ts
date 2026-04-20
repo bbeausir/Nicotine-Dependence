@@ -4,11 +4,9 @@ export type BandLabel = 'Low' | 'Medium' | 'High';
 
 export type AssessmentResult = {
   scoringVersion: string;
+  answersVersion: string;
   dependenceScore: number;
-  cravingReactivityScore: number;
-  cravingReactivityLabel: BandLabel;
-  regulationConfidenceScore: number;
-  regulationConfidenceLabel: BandLabel;
+  dependenceBand: BandLabel;
   primaryPattern: PrimaryPatternId;
   driverSummary: string;
   firstWinSummary: string;

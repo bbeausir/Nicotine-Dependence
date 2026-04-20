@@ -1,0 +1,56 @@
+<svg width="430" height="932" viewBox="0 0 430 932" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="bg" x1="215" y1="0" x2="215" y2="932" gradientUnits="userSpaceOnUse"><stop stop-color="#121722"/><stop offset="1" stop-color="#0B0E14"/></linearGradient></defs>
+  <rect width="430" height="932" rx="38" fill="url(#bg)"/>
+<circle cx="52" cy="160" r="150" fill="#B5935B" opacity="0.08"/>
+<circle cx="390" cy="720" r="170" fill="#B5935B" opacity="0.055"/>
+<rect x="163" y="18" width="104" height="8" rx="4" fill="#252D3A"/>
+<text x="28" y="64" fill="#B5935B" font-size="13" font-family="Arial, sans-serif" font-weight="700" text-anchor="start" letter-spacing="1">HOME VIEW 5</text>
+<text x="28" y="104" fill="#FFFFFF" font-size="31" font-family="Georgia, serif" font-weight="500" text-anchor="start" >Full house dashboard</text>
+<text x="28" y="133" fill="#A8B0BD" font-size="15" font-family="Arial, sans-serif" font-weight="400" text-anchor="start" >Dense home that houses key data, actions, and shortcuts.</text>
+<rect x="24" y="158" width="382" height="132" rx="22" fill="#121820" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<text x="48" y="196" fill="#FFFFFF" font-size="25" font-family="Georgia, serif" font-weight="500" text-anchor="start" >Today</text>
+<rect x="48" y="220" width="88" height="30" rx="15.0" fill="#202A35" fill-opacity="1"/><text x="92.0" y="240.0" fill="#B5935B" font-size="14" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >Day 6</text>
+<rect x="146" y="220" width="100" height="30" rx="15.0" fill="#2A241B" fill-opacity="1"/><text x="196.0" y="240.0" fill="#F2D39C" font-size="14" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >Medium urge</text>
+<rect x="256" y="220" width="104" height="30" rx="15.0" fill="#202A35" fill-opacity="1"/><text x="308.0" y="240.0" fill="#FFFFFF" font-size="14" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >Check-in due</text>
+<rect x="48" y="262" width="156" height="38" rx="999" fill="#B5935B" fill-opacity="1" stroke="rgba(255,255,255,0.28)" stroke-width="1"/><text x="126.0" y="287.0" fill="#FFFFFF" font-size="16" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >Check in</text>
+<rect x="24" y="310" width="184" height="110" rx="20" fill="#121820" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<text x="44" y="346" fill="#A8B0BD" font-size="17" font-family="Arial, sans-serif" font-weight="600" text-anchor="start" >Streak</text>
+<text x="44" y="380" fill="#FFFFFF" font-size="28" font-family="Arial, sans-serif" font-weight="700" text-anchor="start" >6 days</text>
+<text x="44" y="404" fill="#7A8494" font-size="12" font-family="Arial, sans-serif" font-weight="600" text-anchor="start" >2 wins this week</text>
+<rect x="222" y="310" width="184" height="110" rx="20" fill="#121820" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<text x="242" y="346" fill="#A8B0BD" font-size="17" font-family="Arial, sans-serif" font-weight="600" text-anchor="start" >Cravings</text>
+<polyline points="246,392 278,374 310,384 342,356 374,366" fill="none" stroke="#B5935B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="246" cy="392" r="3.5" fill="#B5935B"/><circle cx="278" cy="374" r="3.5" fill="#B5935B"/><circle cx="310" cy="384" r="3.5" fill="#B5935B"/><circle cx="342" cy="356" r="3.5" fill="#B5935B"/><circle cx="374" cy="366" r="3.5" fill="#B5935B"/>
+<rect x="24" y="440" width="382" height="108" rx="20" fill="#121820" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<text x="48" y="476" fill="#FFFFFF" font-size="20" font-family="Arial, sans-serif" font-weight="600" text-anchor="start" >Week-one focus</text>
+<text x="48" y="504" fill="#A8B0BD" font-size="14" font-family="Arial, sans-serif" font-weight="400" text-anchor="start" >Add a 60-second pause before one daily transition.</text>
+<rect x="282" y="466" width="88" height="36" rx="999" fill="#1A222C" fill-opacity="1" stroke="#252D3A" stroke-width="1"/><text x="326.0" y="489.0" fill="#FFFFFF" font-size="13" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >Start</text>
+<rect x="24" y="568" width="116" height="92" rx="18" fill="#121820" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<text x="44" y="600" fill="#FFFFFF" font-size="19" font-family="Arial, sans-serif" font-weight="700" text-anchor="start" >SOS</text>
+<text x="44" y="626" fill="#A8B0BD" font-size="12" font-family="Arial, sans-serif" font-weight="600" text-anchor="start" >2-min reset</text>
+<rect x="157" y="568" width="116" height="92" rx="18" fill="#121820" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<text x="177" y="600" fill="#FFFFFF" font-size="19" font-family="Arial, sans-serif" font-weight="700" text-anchor="start" >Social</text>
+<text x="177" y="626" fill="#A8B0BD" font-size="12" font-family="Arial, sans-serif" font-weight="600" text-anchor="start" >Share a win</text>
+<rect x="290" y="568" width="116" height="92" rx="18" fill="#121820" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<text x="310" y="600" fill="#FFFFFF" font-size="19" font-family="Arial, sans-serif" font-weight="700" text-anchor="start" >Read</text>
+<text x="310" y="626" fill="#A8B0BD" font-size="12" font-family="Arial, sans-serif" font-weight="600" text-anchor="start" >Trigger guide</text>
+<rect x="24" y="680" width="382" height="86" rx="20" fill="#121820" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<text x="48" y="714" fill="#FFFFFF" font-size="19" font-family="Arial, sans-serif" font-weight="600" text-anchor="start" >Accountability</text>
+<text x="48" y="742" fill="#A8B0BD" font-size="13" font-family="Arial, sans-serif" font-weight="400" text-anchor="start" >Maya checked in yesterday. Send a quick note when ready.</text>
+<rect x="300" y="706" width="70" height="34" rx="999" fill="#1A222C" fill-opacity="1" stroke="#252D3A" stroke-width="1"/><text x="335.0" y="728.0" fill="#FFFFFF" font-size="13" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >Send</text>
+<rect x="20" y="790" width="390" height="110" rx="28" fill="#11161E" fill-opacity="1" stroke="#252D3A" stroke-width="1"/>
+<rect x="15" y="812" width="62" height="64" rx="18" fill="#17202B" fill-opacity="1" stroke="#1F2935" stroke-width="1"/>
+<text x="46" y="838" fill="#B5935B" font-size="22" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >⌂</text>
+<text x="46" y="862" fill="#FFFFFF" font-size="11" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >Home</text>
+<rect x="99" y="812" width="62" height="64" rx="18" fill="transparent" fill-opacity="1"/>
+<text x="130" y="838" fill="#A8B0BD" font-size="22" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >◦</text>
+<text x="130" y="862" fill="#A8B0BD" font-size="11" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >Social</text>
+<rect x="184" y="812" width="62" height="64" rx="18" fill="#171F2A" fill-opacity="1"/>
+<text x="215" y="838" fill="#A8B0BD" font-size="22" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >!</text>
+<text x="215" y="862" fill="#A8B0BD" font-size="11" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >SOS</text>
+<rect x="269" y="812" width="62" height="64" rx="18" fill="transparent" fill-opacity="1"/>
+<text x="300" y="838" fill="#A8B0BD" font-size="22" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >□</text>
+<text x="300" y="862" fill="#A8B0BD" font-size="11" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >Resources</text>
+<rect x="353" y="812" width="62" height="64" rx="18" fill="transparent" fill-opacity="1"/>
+<text x="384" y="838" fill="#A8B0BD" font-size="22" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" >⚙</text>
+<text x="384" y="862" fill="#A8B0BD" font-size="11" font-family="Arial, sans-serif" font-weight="600" text-anchor="middle" >Settings</text>
+</svg>

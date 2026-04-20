@@ -2,35 +2,30 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { OnboardingAnswers } from '@/features/onboarding/schema/onboardingAnswers';
 import type { AssessmentResult } from '@/features/onboarding/scoring/types';
-import type { AppSupabaseClient } from '@/lib/supabase/client';
 import {
   getOnboardingProfile,
   upsertOnboardingProfile,
 } from '@/lib/repositories/onboardingProfiles';
+import type { AppSupabaseClient } from '@/lib/supabase/client';
 
 const answers: OnboardingAnswers = {
-  nicotineForms: ['pouch'],
-  dailyUseEvents: '3_4',
+  usageFrequency: '3_5_day',
   firstUseAfterWake: '15min',
-  urgeEnvironments: ['work'],
-  emotionalPrecursor: 'stress',
-  highStakesReliance: 'sometimes',
-  performanceBelief: 'somewhat',
-  reductionConcern: 'focus',
-  selfImageConflict: 6,
-  pastAttempts: '1',
-  crashReason: 'stress_event',
-  sprintGoal: 'abstinence',
+  hasTriedToQuit: 'yes',
+  pastRelapseReason: 'stress_event',
+  firstUseAge: '17_24',
+  focusDifficulty: 'occasionally',
+  emotionalCoping: 'frequently',
+  boredomUse: 'rarely',
+  nicotineForms: ['pouch'],
 };
 
 const result: AssessmentResult = {
   scoringVersion: 'v1',
+  answersVersion: '1.0',
   dependenceScore: 42,
-  cravingReactivityScore: 55,
-  cravingReactivityLabel: 'Medium',
-  regulationConfidenceScore: 30,
-  regulationConfidenceLabel: 'Low',
-  primaryPattern: 'stress_regulator',
+  dependenceBand: 'Medium',
+  primaryPattern: 'stress_driver',
   driverSummary: 'driver',
   firstWinSummary: 'first win',
   weekOneFocus: 'focus',

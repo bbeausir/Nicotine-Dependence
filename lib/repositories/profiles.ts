@@ -53,7 +53,10 @@ export async function getProfile(
 export async function updateProfile(
   client: AppSupabaseClient,
   userId: string,
-  patch: Pick<ProfileUpdate, 'quit_date' | 'daily_cost'>,
+  patch: Pick<
+    ProfileUpdate,
+    'quit_date' | 'daily_cost' | 'display_name' | 'age_band' | 'gender' | 'attribution'
+  >,
 ): Promise<UpdateProfileResult> {
   const { data, error } = await client
     .from('profiles')

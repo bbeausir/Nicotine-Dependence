@@ -7,9 +7,10 @@ Mobile-first Expo app for nicotine dependence assessment and early-stage quit su
 Implemented today:
 
 - Welcome screen with product framing and assessment entry point
-- Multi-step onboarding assessment built with `react-hook-form` and `zod`
-- Rules-based scoring for dependence, craving reactivity, regulation confidence, and primary pattern assignment
-- Results screen with pattern label, score summary, and next-step guidance
+- Nine-question onboarding assessment (one question per page) built with `react-hook-form` and `zod`, with a "Skip test" escape hatch to sign-up
+- "Almost There" profile step (name required; age, gender, and attribution optional) that writes to `profiles`
+- Rules-based v1.0 scoring: `dependenceScore` plus a three-driver pattern (stress, boredom, habit)
+- Results screen with driver label, dependence score + band, and next-step guidance
 - Supabase email/password auth: sign up, sign in, and forgot password
 - Route guards that require auth plus a completed assessment before entering the app shell
 - Local persistence for completed assessment sessions via AsyncStorage / SecureStore-backed auth storage
@@ -25,10 +26,13 @@ Present but still placeholder-level:
 ## Product Flow
 
 1. User lands on the welcome screen.
-2. User completes the onboarding assessment.
-3. The app calculates a rules-based result and shows a results summary.
-4. The user can create an account to save progress or sign in if they already have one.
-5. Authenticated users are redirected into the tabbed product shell.
+2. User completes the onboarding assessment (or taps **Skip test** to go straight to sign-up).
+3. User fills in the **Almost There** step (name, plus optional age/gender/attribution).
+4. The app computes a deterministic result and shows the results summary.
+5. The user can create an account to save progress or sign in if they already have one.
+6. Authenticated users are redirected into the tabbed product shell.
+
+On submit of Almost There, when signed in the app writes the assessment snapshot to `onboarding_profiles` and the profile fields to `profiles`. When signed out, everything is held locally and flushed to Supabase on the next sign-in.
 
 If a signed-in user has not completed the assessment, the route guard sends them back to `/onboarding`.
 
@@ -90,8 +94,8 @@ Without these values, the app still loads, but auth actions will surface a confi
 
 The current durable backend model is intentionally small:
 
-- `profiles`: one app-owned profile row per Supabase auth user. Auto-created by the `on_auth_user_created` trigger on `auth.users`.
-- `onboarding_profiles`: one onboarding assessment snapshot per user.
+- `profiles`: one app-owned profile row per Supabase auth user. Auto-created by the `on_auth_user_created` trigger on `auth.users`. Stores `display_name` (surfaced in-app), `quit_date`, `daily_cost`, and the research-only `age_band`, `gender`, and `attribution` fields collected in Almost There.
+- `onboarding_profiles`: one onboarding assessment snapshot per user (answers + computed result as `jsonb`).
 
 Onboarding is treated as a setup snapshot, not an ongoing assessment or tracking history.
 
@@ -156,23 +160,13 @@ npm run web
 
 ## Scoring Model
 
-The onboarding flow produces a deterministic assessment result with:
+The onboarding flow produces a deterministic v1.0 assessment result with:
 
-- `dependenceScore`
-- `cravingReactivityScore`
-- `regulationConfidenceScore`
-- `primaryPattern`
+- `dependenceScore` (0–100) plus a `dependenceBand` of Low / Medium / High
+- `primaryPattern` — one of three drivers: Stress Driver, Boredom Driver, Habit Driver
+- Narrative copy fields: `driverSummary`, `firstWinSummary`, `weekOneFocus`
 
-Current primary patterns:
-
-- Stress Regulator
-- Focus Protector
-- Transition Soother
-- Social Armor User
-- Under-stimulation User
-- Habitual User
-
-Scoring and pattern assignment live in `features/onboarding/scoring/` and are intentionally rules-based and testable.
+Both `scoringVersion` and `answersVersion` are stamped on every result so the payload can be safely migrated later. Scoring and pattern assignment live in `features/onboarding/scoring/` and are rules-based and unit-tested.
 
 ## Testing
 
