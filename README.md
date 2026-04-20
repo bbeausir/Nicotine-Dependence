@@ -14,6 +14,7 @@ Implemented today:
 - Supabase email/password auth: sign up, sign in, and forgot password
 - Route guards that require auth plus a completed assessment before entering the app shell
 - Local persistence for completed assessment sessions via AsyncStorage / SecureStore-backed auth storage
+- Home quit-date tracking for days free/countdown, money saved, and computed next milestone
 - Basic analytics event stubs for funnel instrumentation in development
 
 Present but still placeholder-level:

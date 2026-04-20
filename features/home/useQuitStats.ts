@@ -7,6 +7,7 @@ const MILESTONES: readonly { days: number; label: string }[] = [
   { days: 3, label: '3 Days' },
   { days: 7, label: '1 Week' },
   { days: 14, label: '2 Weeks' },
+  { days: 21, label: '3 Weeks' },
   { days: 30, label: '1 Month' },
   { days: 60, label: '2 Months' },
   { days: 90, label: '3 Months' },

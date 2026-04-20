@@ -48,12 +48,17 @@ describe('computeQuitStats', () => {
 
   it('picks the next milestone the user has not yet reached', () => {
     const stats = computeQuitStats('2026-04-04', null, at(2026, 4, 18));
-    expect(stats!.nextMilestone).toEqual({ days: 30, label: '1 Month', daysAway: 16 });
+    expect(stats!.nextMilestone).toEqual({ days: 21, label: '3 Weeks', daysAway: 7 });
   });
 
   it('advances to the next milestone the day after one is reached', () => {
     const stats = computeQuitStats('2026-04-04', null, at(2026, 4, 11));
     expect(stats!.nextMilestone).toEqual({ days: 14, label: '2 Weeks', daysAway: 7 });
+  });
+
+  it('advances from 3 Weeks to 1 Month after the three-week milestone is reached', () => {
+    const stats = computeQuitStats('2026-04-04', null, at(2026, 4, 25));
+    expect(stats!.nextMilestone).toEqual({ days: 30, label: '1 Month', daysAway: 9 });
   });
 
   it('returns null nextMilestone after the final one is passed', () => {
