@@ -10,11 +10,12 @@ import {
 } from 'react-hook-form';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { AssessmentProgressRing } from '@/components/ui/AssessmentProgressRing';
+import { AssessmentProgressBar } from '@/components/ui/AssessmentProgressBar';
 import { PrimaryButton } from '@/components/ui/PrimaryButton';
 import { Screen } from '@/components/ui/Screen';
 import { useColorScheme } from '@/components/useColorScheme';
 import { assessmentCopy } from '@/features/onboarding/content/assessmentCopy';
+import { LanguageButton } from '@/features/onboarding/components/LanguageButton';
 import { useAssessmentDraft } from '@/features/onboarding/hooks/useAssessmentDraft';
 import {
   defaultOnboardingAnswers,
@@ -160,6 +161,7 @@ export function OnboardingAssessment() {
 
   const safeIdx = sequence.length === 0 ? 0 : Math.min(questionIndex, sequence.length - 1);
   const currentField = sequence[safeIdx];
+  // Bar shows a little progress on Q1 and fills one step each time the user answers a question.
   const progress = sequence.length > 0 ? (safeIdx + 1) / sequence.length : 0;
 
   const isLast = sequence.length > 0 && safeIdx >= sequence.length - 1;
@@ -167,36 +169,31 @@ export function OnboardingAssessment() {
   return (
     <Screen style={styles.screen}>
       <View style={styles.headerRow}>
-        <Pressable onPress={goBack} hitSlop={12} style={styles.headerBack}>
+        <Pressable
+          onPress={goBack}
+          hitSlop={12}
+          accessibilityRole="button"
+          accessibilityLabel={questionIndex === 0 ? 'Exit assessment' : 'Previous question'}
+          style={styles.headerBack}>
           <Text
             style={{
               color: t.color.textMuted,
-              fontSize: 14,
+              fontSize: 22,
               fontFamily: t.typeface.uiMedium,
+              lineHeight: 22,
             }}>
-            ← {questionIndex === 0 ? 'Exit' : 'Back'}
+            ←
           </Text>
         </Pressable>
-        <View style={styles.headerCenter}>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={[
-              styles.sectionLabel,
-              { color: t.color.accent, fontFamily: t.typeface.uiSemibold },
-            ]}>
-            Assessment
-          </Text>
-        </View>
-        <View style={styles.headerRing}>
-          <AssessmentProgressRing
+        <View style={styles.headerBar}>
+          <AssessmentProgressBar
             progress={progress}
             trackColor={t.color.border}
-            textColor={t.color.textPrimary}
-            fontFamily={t.typeface.uiSemibold}
-            size={44}
-            strokeWidth={3}
+            fillColor={t.color.accent}
           />
+        </View>
+        <View style={styles.headerLang}>
+          <LanguageButton />
         </View>
       </View>
 
@@ -485,22 +482,16 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   headerBack: { flexShrink: 0 },
-  headerCenter: {
+  headerBar: {
     flex: 1,
     minWidth: 0,
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
     justifyContent: 'center',
   },
-  headerRing: {
+  headerLang: {
     flexShrink: 0,
     alignItems: 'flex-end',
     justifyContent: 'center',
-  },
-  sectionLabel: {
-    fontSize: 12,
-    letterSpacing: 1.1,
-    textTransform: 'uppercase',
-    textAlign: 'center',
   },
   block: { gap: 10, marginBottom: 8 },
   prompt: { fontSize: 32, lineHeight: 40, marginBottom: 8 },
