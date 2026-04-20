@@ -76,10 +76,10 @@ export default function AlmostThereScreen() {
         </Pressable>
       </View>
 
-      <Text style={[styles.kicker, { color: t.color.accent, fontFamily: t.typeface.uiSemibold }]}>
+      <Text style={[styles.h1, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
         Almost there
       </Text>
-      <Text style={[styles.title, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
+      <Text style={[styles.h2, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
         A few quick details
       </Text>
 
@@ -253,8 +253,8 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 4,
   },
-  kicker: { fontSize: 12, letterSpacing: 1.1, textTransform: 'uppercase' },
-  title: { fontSize: 32, lineHeight: 38, marginBottom: 4 },
+  h1: { fontSize: 34, lineHeight: 40, marginBottom: 2 },
+  h2: { fontSize: 22, lineHeight: 28, marginBottom: 6 },
   block: { gap: 10, marginBottom: 4 },
   blockHeader: { flexDirection: 'row', alignItems: 'baseline', gap: 8 },
   blockTitle: { fontSize: 18 },

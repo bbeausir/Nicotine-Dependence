@@ -8,7 +8,7 @@ import {
   type DeepPartial,
   type FieldPath,
 } from 'react-hook-form';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AssessmentProgressRing } from '@/components/ui/AssessmentProgressRing';
 import { PrimaryButton } from '@/components/ui/PrimaryButton';
@@ -165,7 +165,7 @@ export function OnboardingAssessment() {
   const isLast = sequence.length > 0 && safeIdx >= sequence.length - 1;
 
   return (
-    <Screen scroll contentContainerStyle={styles.screen}>
+    <Screen style={styles.screen}>
       <View style={styles.headerRow}>
         <Pressable onPress={goBack} hitSlop={12} style={styles.headerBack}>
           <Text
@@ -200,6 +200,11 @@ export function OnboardingAssessment() {
         </View>
       </View>
 
+      <ScrollView
+        style={styles.questionScroll}
+        contentContainerStyle={styles.questionContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}>
       {currentField === 'usageFrequency' ? (
         <SingleField
           control={control}
@@ -207,6 +212,7 @@ export function OnboardingAssessment() {
           prompt={assessmentCopy.usageFrequency.prompt}
           options={assessmentCopy.usageFrequency.options}
           error={errors.usageFrequency?.message}
+          onSelect={goNext}
           t={t}
         />
       ) : null}
@@ -217,6 +223,7 @@ export function OnboardingAssessment() {
           prompt={assessmentCopy.firstUseAfterWake.prompt}
           options={assessmentCopy.firstUseAfterWake.options}
           error={errors.firstUseAfterWake?.message}
+          onSelect={goNext}
           t={t}
         />
       ) : null}
@@ -227,6 +234,7 @@ export function OnboardingAssessment() {
           prompt={assessmentCopy.hasTriedToQuit.prompt}
           options={assessmentCopy.hasTriedToQuit.options}
           error={errors.hasTriedToQuit?.message}
+          onSelect={goNext}
           t={t}
         />
       ) : null}
@@ -237,6 +245,7 @@ export function OnboardingAssessment() {
           prompt={assessmentCopy.pastRelapseReason.prompt}
           options={assessmentCopy.pastRelapseReason.options}
           error={errors.pastRelapseReason?.message}
+          onSelect={goNext}
           t={t}
         />
       ) : null}
@@ -247,6 +256,7 @@ export function OnboardingAssessment() {
           prompt={assessmentCopy.firstUseAge.prompt}
           options={assessmentCopy.firstUseAge.options}
           error={errors.firstUseAge?.message}
+          onSelect={goNext}
           t={t}
         />
       ) : null}
@@ -257,6 +267,7 @@ export function OnboardingAssessment() {
           prompt={assessmentCopy.focusDifficulty.prompt}
           options={assessmentCopy.focusDifficulty.options}
           error={errors.focusDifficulty?.message}
+          onSelect={goNext}
           t={t}
         />
       ) : null}
@@ -267,6 +278,7 @@ export function OnboardingAssessment() {
           prompt={assessmentCopy.emotionalCoping.prompt}
           options={assessmentCopy.emotionalCoping.options}
           error={errors.emotionalCoping?.message}
+          onSelect={goNext}
           t={t}
         />
       ) : null}
@@ -277,6 +289,7 @@ export function OnboardingAssessment() {
           prompt={assessmentCopy.boredomUse.prompt}
           options={assessmentCopy.boredomUse.options}
           error={errors.boredomUse?.message}
+          onSelect={goNext}
           t={t}
         />
       ) : null}
@@ -290,14 +303,19 @@ export function OnboardingAssessment() {
           t={t}
         />
       ) : null}
+      </ScrollView>
 
-      <PrimaryButton onPress={goNext}>{isLast ? 'Finish' : 'Continue'}</PrimaryButton>
+      <View style={styles.footer}>
+        {currentField === 'nicotineForms' ? (
+          <PrimaryButton onPress={goNext}>Finish</PrimaryButton>
+        ) : null}
 
-      <Pressable onPress={onSkip} hitSlop={8} style={styles.skipWrap}>
-        <Text style={[styles.skipText, { color: t.color.textMuted, fontFamily: t.typeface.ui }]}>
-          Skip test
-        </Text>
-      </Pressable>
+        <Pressable onPress={onSkip} hitSlop={8} style={styles.skipWrap}>
+          <Text style={[styles.skipText, { color: t.color.textMuted, fontFamily: t.typeface.ui }]}>
+            Skip test
+          </Text>
+        </Pressable>
+      </View>
     </Screen>
   );
 }
@@ -378,6 +396,7 @@ function SingleField({
   prompt,
   options,
   error,
+  onSelect,
   t,
 }: {
   control: Control<OnboardingAnswers>;
@@ -385,6 +404,7 @@ function SingleField({
   prompt: string;
   options: readonly { id: string; label: string }[];
   error?: string;
+  onSelect?: () => void;
   t: ReturnType<typeof getTokens>;
 }) {
   return (
@@ -403,7 +423,10 @@ function SingleField({
               return (
                 <Pressable
                   key={opt.id}
-                  onPress={() => onChange(opt.id)}
+                  onPress={() => {
+                    onChange(opt.id);
+                    onSelect?.();
+                  }}
                   accessibilityRole="radio"
                   accessibilityState={{ checked: selected }}
                   style={[
@@ -435,11 +458,25 @@ function SingleField({
 const styles = StyleSheet.create({
   screen: {
     paddingHorizontal: 24,
-    paddingBottom: 32,
-    gap: 16,
+    paddingTop: 8,
+    paddingBottom: 16,
     width: '100%',
     maxWidth: 860,
     alignSelf: 'center',
+  },
+  questionScroll: {
+    flex: 1,
+    width: '100%',
+  },
+  questionContent: {
+    paddingTop: 8,
+    paddingBottom: 16,
+    gap: 16,
+  },
+  footer: {
+    width: '100%',
+    paddingTop: 12,
+    gap: 4,
   },
   headerRow: {
     flexDirection: 'row',

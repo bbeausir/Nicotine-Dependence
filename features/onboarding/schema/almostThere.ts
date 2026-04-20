@@ -17,6 +17,7 @@ export const attributionIds = [
   'facebook',
   'instagram',
   'tiktok',
+  'word_of_mouth',
 ] as const;
 
 export const almostThereSchema = z.object({
@@ -71,6 +72,7 @@ export const almostThereCopy = {
       { id: 'facebook', label: 'Facebook' },
       { id: 'instagram', label: 'Instagram' },
       { id: 'tiktok', label: 'TikTok' },
+      { id: 'word_of_mouth', label: 'Word of mouth' },
     ],
   },
 } as const;
