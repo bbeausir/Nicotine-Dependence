@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 const MILESTONES: readonly { days: number; label: string }[] = [
@@ -82,5 +84,26 @@ export function computeQuitStats(
 }
 
 export function useQuitStats(quitDate: string | null, dailyCost: number | null): QuitStats | null {
-  return computeQuitStats(quitDate, dailyCost);
+  const [stats, setStats] = useState(() => computeQuitStats(quitDate, dailyCost));
+
+  useEffect(() => {
+    const stats = computeQuitStats(quitDate, dailyCost);
+    setStats(stats);
+
+    if (!stats) return;
+
+    // Calculate time until next midnight
+    const now = new Date();
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const msUntilMidnight = tomorrow.getTime() - now.getTime();
+
+    // Recalculate stats at midnight
+    const timeout = setTimeout(() => {
+      setStats(computeQuitStats(quitDate, dailyCost));
+    }, msUntilMidnight);
+
+    return () => clearTimeout(timeout);
+  }, [quitDate, dailyCost]);
+
+  return stats;
 }
