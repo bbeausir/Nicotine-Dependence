@@ -1,8 +1,6 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 
 import { PrimaryButton } from '@/components/ui/PrimaryButton';
-import { useColorScheme } from '@/components/useColorScheme';
-import { getTokens } from '@/theme/tokens';
 
 const FILTERS = ['All', 'Belief shifts', 'Clarity', 'Freedom', 'Triggers'];
 
@@ -12,9 +10,6 @@ interface FilterPillsProps {
 }
 
 export function FilterPills({ selected, onFilterChange }: FilterPillsProps) {
-  const scheme = useColorScheme();
-  const t = getTokens(scheme);
-
   return (
     <ScrollView
       horizontal
@@ -42,5 +37,7 @@ const styles = StyleSheet.create({
   },
   pill: {
     minWidth: 80,
+    minHeight: 38,
+    paddingHorizontal: 18,
   },
 });
