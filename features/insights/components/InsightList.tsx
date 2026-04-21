@@ -7,6 +7,17 @@ import type { InsightEntry as InsightEntryType } from '@/lib/database/schema';
 
 const RECENT_CUTOFF_DAYS = 7;
 
+type EntryListItem = InsightEntryType & {
+  type: 'entry';
+  isRecent: boolean;
+};
+
+type DividerListItem = {
+  type: 'divider';
+};
+
+type InsightListItem = EntryListItem | DividerListItem;
+
 interface InsightListProps {
   entries: InsightEntryType[];
   onEndReached?: () => void;
@@ -22,12 +33,12 @@ export function InsightList({ entries, onEndReached }: InsightListProps) {
   const recentEntries = entries.filter((e) => e.timestamp > recentCutoff);
   const olderEntries = entries.filter((e) => e.timestamp <= recentCutoff);
 
-  const listData = [
-    ...recentEntries.map((e) => ({ ...e, type: 'entry', isRecent: true })),
+  const listData: InsightListItem[] = [
+    ...recentEntries.map((e) => ({ ...e, type: 'entry' as const, isRecent: true })),
     ...(olderEntries.length > 0
       ? [
           { type: 'divider' as const },
-          ...olderEntries.map((e) => ({ ...e, type: 'entry', isRecent: false })),
+          ...olderEntries.map((e) => ({ ...e, type: 'entry' as const, isRecent: false })),
         ]
       : []),
   ];
@@ -76,7 +87,9 @@ export function InsightList({ entries, onEndReached }: InsightListProps) {
           />
         );
       }}
-      scrollEnabled={false}
+      style={styles.list}
+      contentContainerStyle={styles.listContent}
+      showsVerticalScrollIndicator={false}
       onEndReached={onEndReached}
       onEndReachedThreshold={0.5}
     />
@@ -84,6 +97,12 @@ export function InsightList({ entries, onEndReached }: InsightListProps) {
 }
 
 const styles = StyleSheet.create({
+  list: {
+    flex: 1,
+  },
+  listContent: {
+    paddingBottom: 104,
+  },
   emptyState: {
     flex: 1,
     justifyContent: 'center',
