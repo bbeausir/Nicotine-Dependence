@@ -1,85 +1,28 @@
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Platform } from 'react-native';
+import { useEffect } from 'react';
 
-import { PrimaryButton } from '@/components/ui/PrimaryButton';
-import { Screen } from '@/components/ui/Screen';
-import { useColorScheme } from '@/components/useColorScheme';
-import { getTokens } from '@/theme/tokens';
+import { InsightLibrary } from '@/features/insights/InsightLibrary';
 
-export default function ResourcesTabScreen() {
-  const scheme = useColorScheme();
-  const t = getTokens(scheme);
+let useSQLiteContext: any;
+let initializeDatabase: any;
 
-  return (
-    <Screen scroll contentContainerStyle={styles.content}>
-      <View style={styles.textBlock}>
-        <Text style={[styles.title, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
-          Resources
-        </Text>
-        <Text style={[styles.body, { color: t.color.textPrimary, fontFamily: t.typeface.ui }]}>
-          Resources will organize trusted quit-help content.
-        </Text>
-        <Text style={[styles.body, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
-          We are curating practical guides you can use right away.
-        </Text>
-        <Text style={[styles.bodyMuted, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
-          TODO: Add categorized articles, tools, and local support links.
-        </Text>
-      </View>
-      <View style={styles.actions}>
-        <PrimaryButton
-          onPress={() =>
-            Alert.alert('Guides', 'Browseable guides are coming — clear, kind, and actionable.')
-          }>
-          Browse guides
-        </PrimaryButton>
-        <PrimaryButton
-          variant="secondary"
-          onPress={() =>
-            Alert.alert('Favorites', 'Saving articles you love will land here so you can reopen them anytime.')
-          }>
-          Save a favorite
-        </PrimaryButton>
-        <PrimaryButton
-          variant="ghost"
-          onPress={() =>
-            Alert.alert(
-              'Local support',
-              'We will help you find local and national support options when this section goes live.',
-            )
-          }>
-          Find local support
-        </PrimaryButton>
-      </View>
-    </Screen>
-  );
+if (Platform.OS !== 'web') {
+  const sqliteModule = require('expo-sqlite');
+  useSQLiteContext = sqliteModule.useSQLiteContext;
+  const schemaModule = require('@/lib/database/schema');
+  initializeDatabase = schemaModule.initializeDatabase;
 }
 
-const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 32,
-    gap: 24,
-    width: '100%',
-    maxWidth: 860,
-    alignSelf: 'center',
-  },
-  textBlock: {
-    gap: 12,
-  },
-  title: {
-    fontSize: 28,
-    lineHeight: 34,
-  },
-  body: {
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  bodyMuted: {
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  actions: {
-    gap: 12,
-  },
-});
+export default function ResourcesTabScreen() {
+  const db = Platform.OS !== 'web' ? useSQLiteContext() : null;
+
+  useEffect(() => {
+    if (db && initializeDatabase) {
+      initializeDatabase(db).catch((error: any) => {
+        console.error('Failed to initialize database:', error);
+      });
+    }
+  }, [db]);
+
+  return <InsightLibrary />;
+}
