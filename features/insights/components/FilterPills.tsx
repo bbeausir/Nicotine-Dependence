@@ -1,6 +1,7 @@
-import { ScrollView, StyleSheet } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 
-import { PrimaryButton } from '@/components/ui/PrimaryButton';
+import { useColorScheme } from '@/components/useColorScheme';
+import { getTokens } from '@/theme/tokens';
 
 const FILTERS = ['All', 'Belief shifts', 'Clarity', 'Freedom', 'Triggers'];
 
@@ -10,21 +11,46 @@ interface FilterPillsProps {
 }
 
 export function FilterPills({ selected, onFilterChange }: FilterPillsProps) {
+  const scheme = useColorScheme();
+  const t = getTokens(scheme);
+
   return (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.container}
       scrollEventThrottle={16}>
-      {FILTERS.map((filter) => (
-        <PrimaryButton
-          key={filter}
-          variant={selected === filter ? 'primary' : 'secondary'}
-          onPress={() => onFilterChange(filter)}
-          style={styles.pill}>
-          {filter}
-        </PrimaryButton>
-      ))}
+      {FILTERS.map((filter) => {
+        const isSelected = selected === filter;
+
+        return (
+          <Pressable
+            key={filter}
+            accessibilityRole="button"
+            accessibilityState={{ selected: isSelected }}
+            onPress={() => onFilterChange(filter)}
+            style={({ pressed }) => [
+              styles.pill,
+              {
+                backgroundColor: isSelected ? t.color.accent : t.color.surfaceElevated,
+                borderColor: isSelected ? 'rgba(255, 255, 255, 0.28)' : t.color.border,
+                opacity: pressed ? 0.88 : 1,
+              },
+            ]}>
+            <Text
+              numberOfLines={1}
+              style={[
+                styles.label,
+                {
+                  color: isSelected ? '#ffffff' : t.color.textPrimary,
+                  fontFamily: t.typeface.uiSemibold,
+                },
+              ]}>
+              {filter}
+            </Text>
+          </Pressable>
+        );
+      })}
     </ScrollView>
   );
 }
@@ -36,8 +62,18 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   pill: {
-    minWidth: 80,
-    minHeight: 38,
-    paddingHorizontal: 18,
+    height: 34,
+    minWidth: 64,
+    flexShrink: 0,
+    paddingHorizontal: 16,
+    borderRadius: 999,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  label: {
+    fontSize: 14,
+    lineHeight: 18,
+    letterSpacing: 0,
   },
 });
