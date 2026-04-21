@@ -48,7 +48,7 @@ export function InsightLibrary() {
 
   return (
     <>
-      <Screen style={styles.screen}>
+      <Screen style={styles.screen} includeBottomInset={false}>
         {/* Header */}
         <View style={[styles.header, { borderBottomColor: t.color.border }]}>
           <Text style={[styles.title, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
@@ -110,7 +110,6 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    paddingTop: 8,
   },
   fab: {
     position: 'absolute',

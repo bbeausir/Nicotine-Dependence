@@ -54,7 +54,7 @@ export default function HomeTabScreen() {
       : '—';
 
   return (
-    <Screen scroll contentContainerStyle={styles.content}>
+    <Screen scroll includeBottomInset={false} contentContainerStyle={styles.content}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={[styles.greeting, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>

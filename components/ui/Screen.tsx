@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react';
 import { ScrollView, StyleSheet, View, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 
 import { useColorScheme } from '@/components/useColorScheme';
 import { getTokens } from '@/theme/tokens';
@@ -10,16 +10,18 @@ type ScreenProps = PropsWithChildren<{
   scroll?: boolean;
   style?: ViewStyle;
   contentContainerStyle?: ViewStyle;
+  includeBottomInset?: boolean;
 }>;
 
 /**
  * Safe-area shell + optional scroll. Use for full-screen pages.
  * Includes a subtle top gradient and soft gold ambient glow (dark theme).
  */
-export function Screen({ children, scroll, style, contentContainerStyle }: ScreenProps) {
+export function Screen({ children, scroll, style, contentContainerStyle, includeBottomInset = true }: ScreenProps) {
   const scheme = useColorScheme();
   const t = getTokens(scheme);
   const rootStyle: ViewStyle = { flex: 1, backgroundColor: t.color.background };
+  const safeAreaEdges: Edge[] = includeBottomInset ? ['top', 'left', 'right', 'bottom'] : ['top', 'left', 'right'];
 
   const ambient = (
     <View style={styles.ambient} pointerEvents="none">
@@ -35,7 +37,7 @@ export function Screen({ children, scroll, style, contentContainerStyle }: Scree
 
   if (scroll) {
     return (
-      <SafeAreaView style={[rootStyle, style]} edges={['top', 'left', 'right', 'bottom']}>
+      <SafeAreaView style={[rootStyle, style]} edges={safeAreaEdges}>
         {ambient}
         <ScrollView
           style={styles.flex}
@@ -49,7 +51,7 @@ export function Screen({ children, scroll, style, contentContainerStyle }: Scree
   }
 
   return (
-    <SafeAreaView style={[rootStyle, styles.flex, style]} edges={['top', 'left', 'right', 'bottom']}>
+    <SafeAreaView style={[rootStyle, styles.flex, style]} edges={safeAreaEdges}>
       {ambient}
       <View style={styles.flex}>{children}</View>
     </SafeAreaView>

@@ -10,7 +10,7 @@ export default function SocialTabScreen() {
   const t = getTokens(scheme);
 
   return (
-    <Screen scroll contentContainerStyle={styles.content}>
+    <Screen scroll includeBottomInset={false} contentContainerStyle={styles.content}>
       <View style={styles.textBlock}>
         <Text style={[styles.title, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>Social</Text>
         <Text style={[styles.body, { color: t.color.textPrimary, fontFamily: t.typeface.ui }]}>

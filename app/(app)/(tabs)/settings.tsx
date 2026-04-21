@@ -53,7 +53,7 @@ export default function SettingsTabScreen() {
   }
 
   return (
-    <Screen scroll contentContainerStyle={styles.content}>
+    <Screen scroll includeBottomInset={false} contentContainerStyle={styles.content}>
       <Text style={[styles.title, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
         Settings
       </Text>

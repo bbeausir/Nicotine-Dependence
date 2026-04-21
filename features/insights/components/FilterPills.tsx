@@ -17,6 +17,7 @@ export function FilterPills({ selected, onFilterChange }: FilterPillsProps) {
   return (
     <ScrollView
       horizontal
+      style={styles.scroller}
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.container}
       scrollEventThrottle={16}>
@@ -56,10 +57,15 @@ export function FilterPills({ selected, onFilterChange }: FilterPillsProps) {
 }
 
 const styles = StyleSheet.create({
+  scroller: {
+    height: 54,
+    flexGrow: 0,
+    flexShrink: 0,
+  },
   container: {
     gap: 8,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 10,
   },
   pill: {
     height: 34,

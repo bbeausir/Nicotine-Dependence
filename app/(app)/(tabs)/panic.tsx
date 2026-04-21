@@ -11,7 +11,7 @@ export default function PanicTabScreen() {
   const t = getTokens(scheme);
 
   return (
-    <Screen scroll contentContainerStyle={styles.content}>
+    <Screen scroll includeBottomInset={false} contentContainerStyle={styles.content}>
       <Text style={[styles.heading, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
         {'How can I help\nyou right now?'}
       </Text>
