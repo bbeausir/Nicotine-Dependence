@@ -149,7 +149,7 @@ describe('SignUpScreen', () => {
   });
 
   it('shows the signUp error and does not redirect', async () => {
-    const signUp = vi.fn().mockResolvedValue({ status: 'error', error: 'Email already registered' });
+    const signUp = vi.fn().mockResolvedValue({ status: 'error', error: 'User already registered' });
     authMocks.useAuth.mockReturnValue({
       signUp,
       authError: null,
@@ -166,7 +166,12 @@ describe('SignUpScreen', () => {
 
     await pressSubmit(renderer);
 
-    expect(renderer.root.findByProps({ children: 'Email already registered' })).toBeTruthy();
+    // `friendlyAuthError` maps "user already registered" to this user-facing copy.
+    expect(
+      renderer.root.findByProps({
+        children: 'An account with this email already exists. Try signing in.',
+      }),
+    ).toBeTruthy();
     expect(routerMocks.replace).not.toHaveBeenCalled();
     expect(analyticsMocks.track).not.toHaveBeenCalled();
   });

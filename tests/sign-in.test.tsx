@@ -163,7 +163,8 @@ describe('SignInScreen', () => {
 
     await pressSubmit(renderer);
 
-    expect(renderer.root.findByProps({ children: 'Invalid credentials' })).toBeTruthy();
+    // `friendlyAuthError` maps "invalid credentials" to this user-facing copy.
+    expect(renderer.root.findByProps({ children: 'Incorrect email or password.' })).toBeTruthy();
     expect(routerMocks.replace).not.toHaveBeenCalled();
     expect(analyticsMocks.track).not.toHaveBeenCalled();
   });

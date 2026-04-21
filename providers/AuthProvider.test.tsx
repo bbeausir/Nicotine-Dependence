@@ -28,6 +28,25 @@ vi.mock('expo-router', () => ({
   router: { replace: vi.fn(), push: vi.fn(), back: vi.fn() },
 }));
 
+// AsyncStorage and expo-secure-store are pulled in transitively by
+// `@/lib/storage/assessmentStorage` and would otherwise force Vitest/Rolldown
+// to parse `react-native/index.js` (Flow syntax).
+vi.mock('@react-native-async-storage/async-storage', () => ({
+  default: { getItem: vi.fn(), setItem: vi.fn(), removeItem: vi.fn() },
+}));
+
+vi.mock('expo-secure-store', () => ({
+  getItemAsync: vi.fn(),
+  setItemAsync: vi.fn(),
+  deleteItemAsync: vi.fn(),
+}));
+
+// `AuthProvider` calls `ensureProfile` in a useEffect when the user id changes.
+// Stub it so the mocked Supabase client doesn't need a real `.from()` method.
+vi.mock('@/lib/repositories/profiles', () => ({
+  ensureProfile: vi.fn().mockResolvedValue({ error: null }),
+}));
+
 type MockSession = {
   user: {
     id: string;
@@ -316,10 +335,7 @@ describe('AuthProvider', () => {
 
   it('signOut calls the client when present and clears stale auth state when the client is missing', async () => {
     const initialClient = createMockClient({ initialSession: createSession() });
-    supabaseMocks.getSupabaseClient
-      .mockReturnValueOnce(initialClient.client)
-      .mockReturnValueOnce(initialClient.client)
-      .mockReturnValueOnce(null);
+    supabaseMocks.getSupabaseClient.mockReturnValue(initialClient.client);
     supabaseMocks.getSupabaseConfigError.mockReturnValue(null);
 
     const renderer = await renderProvider();
@@ -332,6 +348,9 @@ describe('AuthProvider', () => {
       id: 'user-1',
       email: 'user@example.com',
     });
+
+    // Simulate the client becoming unavailable (e.g. env config disappeared).
+    supabaseMocks.getSupabaseClient.mockReturnValue(null);
 
     await act(async () => {
       await getAuth().signOut();

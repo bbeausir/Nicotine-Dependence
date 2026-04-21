@@ -1,4 +1,22 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// AsyncStorage and expo-secure-store are pulled in transitively by
+// `@/lib/storage/assessmentStorage` (via the tested modules) and would otherwise
+// force Vitest/Rolldown to parse `react-native/index.js` (Flow syntax).
+vi.mock('@react-native-async-storage/async-storage', () => ({
+  default: { getItem: vi.fn(), setItem: vi.fn(), removeItem: vi.fn() },
+}));
+
+vi.mock('expo-secure-store', () => ({
+  getItemAsync: vi.fn(),
+  setItemAsync: vi.fn(),
+  deleteItemAsync: vi.fn(),
+}));
+
+vi.mock('expo-linking', () => ({ createURL: vi.fn() }));
+vi.mock('expo-router', () => ({
+  router: { replace: vi.fn(), push: vi.fn(), back: vi.fn() },
+}));
 
 import { parseDraftPayload } from '@/features/onboarding/hooks/useAssessmentDraft';
 import type { OnboardingAnswers } from '@/features/onboarding/schema/onboardingAnswers';
