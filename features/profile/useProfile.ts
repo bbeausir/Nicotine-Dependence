@@ -4,11 +4,17 @@ import { getProfile, updateProfile, type Profile } from '@/lib/repositories/prof
 import { getSupabaseClient } from '@/lib/supabase/client';
 import { useAuth } from '@/providers/AuthProvider';
 
+export type ProfilePatch = {
+  quit_date?: string | null;
+  daily_cost?: number | null;
+  display_name?: string | null;
+};
+
 export type UseProfileResult = {
   profile: Profile | null;
   isLoading: boolean;
   error: string | null;
-  save: (patch: { quit_date: string | null; daily_cost: number | null }) => Promise<{ error: string | null }>;
+  save: (patch: ProfilePatch) => Promise<{ error: string | null }>;
 };
 
 export function useProfile(): UseProfileResult {
@@ -49,7 +55,7 @@ export function useProfile(): UseProfileResult {
   }, [userId]);
 
   const save = useCallback(
-    async (patch: { quit_date: string | null; daily_cost: number | null }) => {
+    async (patch: ProfilePatch) => {
       if (!userId) return { error: 'Not signed in.' };
       const client = getSupabaseClient();
       if (!client) return { error: 'Supabase is not configured.' };

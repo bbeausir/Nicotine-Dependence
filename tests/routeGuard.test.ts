@@ -4,35 +4,21 @@ import { getAppRedirect } from '@/app/(app)/routeGuard';
 
 describe('getAppRedirect', () => {
   const cases = [
-    { authReady: false, assessmentReady: false, hasUser: false, hasResult: false, expected: null },
-    { authReady: false, assessmentReady: false, hasUser: false, hasResult: true, expected: null },
-    { authReady: false, assessmentReady: false, hasUser: true, hasResult: false, expected: null },
-    { authReady: false, assessmentReady: false, hasUser: true, hasResult: true, expected: null },
-    { authReady: false, assessmentReady: true, hasUser: false, hasResult: false, expected: null },
-    { authReady: false, assessmentReady: true, hasUser: false, hasResult: true, expected: null },
-    { authReady: false, assessmentReady: true, hasUser: true, hasResult: false, expected: null },
-    { authReady: false, assessmentReady: true, hasUser: true, hasResult: true, expected: null },
-    { authReady: true, assessmentReady: false, hasUser: false, hasResult: false, expected: null },
-    { authReady: true, assessmentReady: false, hasUser: false, hasResult: true, expected: null },
-    { authReady: true, assessmentReady: false, hasUser: true, hasResult: false, expected: null },
-    { authReady: true, assessmentReady: false, hasUser: true, hasResult: true, expected: null },
-    { authReady: true, assessmentReady: true, hasUser: false, hasResult: false, expected: '/sign-in' },
-    { authReady: true, assessmentReady: true, hasUser: false, hasResult: true, expected: '/sign-in' },
-    { authReady: true, assessmentReady: true, hasUser: true, hasResult: false, expected: '/onboarding' },
-    { authReady: true, assessmentReady: true, hasUser: true, hasResult: true, expected: null },
+    { authReady: false, hasUser: false, expected: null },
+    { authReady: false, hasUser: true, expected: null },
+    { authReady: true, hasUser: false, expected: '/sign-in' },
+    { authReady: true, hasUser: true, expected: null },
   ] as const;
 
   it.each(cases)(
-    'returns $expected for authReady=$authReady assessmentReady=$assessmentReady hasUser=$hasUser hasResult=$hasResult',
-    ({ authReady, assessmentReady, hasUser, hasResult, expected }) => {
-      expect(
-        getAppRedirect({
-          authReady,
-          assessmentReady,
-          hasUser,
-          hasResult,
-        }),
-      ).toBe(expected);
+    'returns $expected for authReady=$authReady hasUser=$hasUser',
+    ({ authReady, hasUser, expected }) => {
+      expect(getAppRedirect({ authReady, hasUser })).toBe(expected);
     },
   );
+
+  it('does not redirect an authenticated user to /onboarding when assessment is missing', () => {
+    // Onboarding is a pre-auth marketing flow, not a post-auth gate.
+    expect(getAppRedirect({ authReady: true, hasUser: true })).toBeNull();
+  });
 });

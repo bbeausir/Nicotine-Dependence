@@ -26,6 +26,9 @@ export default function HomeTabScreen() {
   const { profile, isLoading } = useProfile();
   const stats = useQuitStats(profile?.quit_date ?? null, profile?.daily_cost ?? null);
 
+  const firstName = profile?.display_name?.trim().split(/\s+/)[0] ?? '';
+  const greeting = firstName ? `Hi, ${firstName}` : 'Hi there';
+
   const center = RING_SIZE / 2;
   const r = (RING_SIZE - RING_STROKE) / 2;
 
@@ -58,7 +61,7 @@ export default function HomeTabScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={[styles.greeting, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
-          Hi, Ben
+          {greeting}
         </Text>
         <Text style={[styles.subgreeting, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
           {stats?.stage === 'countdown' ? 'Almost there.' : 'Keep going strong!'}

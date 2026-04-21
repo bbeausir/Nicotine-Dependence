@@ -31,10 +31,15 @@ export default function ResultsScreen() {
   if (!result) {
     return (
       <Screen scroll contentContainerStyle={styles.content}>
-               <Text style={[styles.body, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
-          No results yet. Take the assessment first.
+        <Text style={[styles.body, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
+          {user
+            ? 'No saved results yet. You can head home or take the optional assessment anytime.'
+            : 'No results yet. Take the assessment first.'}
         </Text>
-        <PrimaryButton onPress={() => router.replace('/onboarding')}>Go to assessment</PrimaryButton>
+        <PrimaryButton
+          onPress={() => router.replace(user ? '/home' : '/onboarding')}>
+          {user ? 'Go to home' : 'Go to assessment'}
+        </PrimaryButton>
       </Screen>
     );
   }

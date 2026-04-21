@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseDailyCost, parseDateInput } from '@/features/profile/profileFormHelpers';
+import { parseDailyCost, parseDateInput, parseDisplayName } from '@/features/profile/profileFormHelpers';
 
 describe('parseDateInput', () => {
   it('returns null with no error for empty input (clearing the field)', () => {
@@ -48,5 +48,20 @@ describe('parseDailyCost', () => {
 
   it('rejects amounts above the cap', () => {
     expect(parseDailyCost('10000').error).toBe('Keep it under $10,000.');
+  });
+});
+
+describe('parseDisplayName', () => {
+  it('returns null with no error for empty input (clearing the field)', () => {
+    expect(parseDisplayName('')).toEqual({ value: null, error: null });
+    expect(parseDisplayName('   ')).toEqual({ value: null, error: null });
+  });
+
+  it('trims and accepts a valid name', () => {
+    expect(parseDisplayName('  Alex  ')).toEqual({ value: 'Alex', error: null });
+  });
+
+  it('rejects names over 60 characters', () => {
+    expect(parseDisplayName('x'.repeat(61)).error).toBe('Keep it under 60 characters.');
   });
 });

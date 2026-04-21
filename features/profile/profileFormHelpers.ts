@@ -14,6 +14,14 @@ export function parseDateInput(input: string): { value: string | null; error: st
   return { value: trimmed, error: null };
 }
 
+/** Validates a display name. Empty is allowed (clears name); otherwise trim + max 60. */
+export function parseDisplayName(input: string): { value: string | null; error: string | null } {
+  const trimmed = input.trim();
+  if (!trimmed) return { value: null, error: null };
+  if (trimmed.length > 60) return { value: null, error: 'Keep it under 60 characters.' };
+  return { value: trimmed, error: null };
+}
+
 export function parseDailyCost(input: string): { value: number | null; error: string | null } {
   const trimmed = input.trim();
   if (!trimmed) return { value: null, error: null };

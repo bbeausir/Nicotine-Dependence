@@ -12,7 +12,7 @@ Implemented today:
 - Rules-based v1.0 scoring: `dependenceScore` plus a three-driver pattern (stress, boredom, habit)
 - Results screen with driver label, dependence score + band, and next-step guidance
 - Supabase email/password auth: sign up, sign in, and forgot password
-- Route guards that require auth plus a completed assessment before entering the app shell
+- Route guards that require auth (only) before entering the app shell — the onboarding assessment is a pre-auth marketing flow, not a post-auth gate
 - Local persistence for completed assessment sessions via AsyncStorage / SecureStore-backed auth storage
 - Home quit-date tracking for days free/countdown, money saved, and computed next milestone
 - Basic analytics event stubs for funnel instrumentation in development
@@ -27,7 +27,7 @@ Present but still placeholder-level:
 ## Product Flow
 
 1. User lands on the welcome screen.
-2. User completes the onboarding assessment (or taps **Skip test** to go straight to sign-up).
+2. User completes the onboarding assessment (or taps **Skip test** to go straight to sign-up). The assessment is optional pre-auth free-value — it is not required to use the app.
 3. User fills in the **Almost There** step (name, plus optional age/gender/attribution).
 4. The app computes a deterministic result and shows the results summary.
 5. The user can create an account to save progress or sign in if they already have one.
@@ -35,7 +35,7 @@ Present but still placeholder-level:
 
 On submit of Almost There, when signed in the app writes the assessment snapshot to `onboarding_profiles` and the profile fields to `profiles`. When signed out, everything is held locally and flushed to Supabase on the next sign-in.
 
-If a signed-in user has not completed the assessment, the route guard sends them back to `/onboarding`.
+Authenticated users can enter and use the app without taking the assessment. `onboarding_profiles` is optional saved assessment data, not required setup state — its absence just means the user did not take the pre-auth assessment. Display name lives on `profiles.display_name` and can be edited in `/settings/profile`; home falls back to a friendly "Hi there" when it is missing.
 
 ## Tech Stack
 

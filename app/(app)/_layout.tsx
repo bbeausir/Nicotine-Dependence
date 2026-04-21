@@ -4,27 +4,24 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { getAppRedirect } from '@/app/(app)/routeGuard';
 import { useAuth } from '@/providers/AuthProvider';
-import { useAssessment } from '@/providers/AssessmentProvider';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getTokens } from '@/theme/tokens';
 
 /**
- * Authenticated product shell. TODO(DATA): refine redirects (e.g. deep links, onboarding incomplete).
+ * Authenticated product shell. Assessment completion is not required —
+ * onboarding is a pre-auth marketing flow, not a post-auth gate.
  */
 export default function AppGroupLayout() {
   const { user, isReady } = useAuth();
-  const { result, isReady: isAssessmentReady } = useAssessment();
   const scheme = useColorScheme();
   const t = getTokens(scheme);
   const router = useRouter();
   const redirect = getAppRedirect({
     authReady: isReady,
-    assessmentReady: isAssessmentReady,
     hasUser: Boolean(user),
-    hasResult: Boolean(result),
   });
 
-  if (!isReady || !isAssessmentReady) {
+  if (!isReady) {
     return null;
   }
 

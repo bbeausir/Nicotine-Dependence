@@ -9,7 +9,9 @@ import { ensureProfile } from '@/lib/repositories/profiles';
 
 const ASSESSMENT_STORAGE_KEYS = [
   'nicotine.assessment.session.v1',
+  'nicotine.assessment.session.v2',
   'nicotine.onboardingDraft.v1',
+  'nicotine.onboardingDraft.v2',
 ];
 
 export type AuthUser = {

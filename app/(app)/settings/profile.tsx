@@ -9,7 +9,7 @@ import { PrimaryButton } from '@/components/ui/PrimaryButton';
 import { Screen } from '@/components/ui/Screen';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useProfile } from '@/features/profile/useProfile';
-import { parseDailyCost, parseDateInput } from '@/features/profile/profileFormHelpers';
+import { parseDailyCost, parseDateInput, parseDisplayName } from '@/features/profile/profileFormHelpers';
 import { getTokens } from '@/theme/tokens';
 
 export default function ProfileSettingsScreen() {
@@ -18,6 +18,7 @@ export default function ProfileSettingsScreen() {
   const router = useRouter();
   const { profile, isLoading, error, save } = useProfile();
 
+  const [displayNameInput, setDisplayNameInput] = useState('');
   const [quitDateInput, setQuitDateInput] = useState('');
   const [dailyCostInput, setDailyCostInput] = useState('');
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -27,6 +28,7 @@ export default function ProfileSettingsScreen() {
 
   useEffect(() => {
     if (profile) {
+      setDisplayNameInput(profile.display_name ?? '');
       setQuitDateInput(profile.quit_date ?? '');
       setDailyCostInput(profile.daily_cost !== null ? String(profile.daily_cost) : '');
       // Initialize tempDate for picker
@@ -75,6 +77,11 @@ export default function ProfileSettingsScreen() {
   const handleSave = () => {
     void (async () => {
       setSubmitError(null);
+      const nameParse = parseDisplayName(displayNameInput);
+      if (nameParse.error) {
+        setSubmitError(nameParse.error);
+        return;
+      }
       const dateParse = parseDateInput(quitDateInput);
       if (dateParse.error) {
         setSubmitError(dateParse.error);
@@ -88,6 +95,7 @@ export default function ProfileSettingsScreen() {
 
       setIsSubmitting(true);
       const { error: saveError } = await save({
+        display_name: nameParse.value,
         quit_date: dateParse.value,
         daily_cost: costParse.value,
       });
@@ -118,6 +126,28 @@ export default function ProfileSettingsScreen() {
         </View>
       ) : (
         <View style={[styles.card, { backgroundColor: t.color.surface, borderColor: t.color.border }]}>
+          <View style={styles.field}>
+            <Text style={[styles.label, { color: t.color.textSecondary, fontFamily: t.typeface.uiMedium }]}>
+              Name
+            </Text>
+            <TextInput
+              autoCapitalize="words"
+              autoCorrect={false}
+              onChangeText={(v) => { setDisplayNameInput(v); setSubmitError(null); }}
+              placeholder="What should we call you?"
+              placeholderTextColor={t.color.textMuted}
+              style={[
+                styles.input,
+                {
+                  borderColor: submitError ? t.color.danger : t.color.border,
+                  color: t.color.textPrimary,
+                  fontFamily: t.typeface.ui,
+                },
+              ]}
+              value={displayNameInput}
+            />
+          </View>
+
           <View style={styles.field}>
             <Text style={[styles.label, { color: t.color.textSecondary, fontFamily: t.typeface.uiMedium }]}>
               Quit date
