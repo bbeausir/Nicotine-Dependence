@@ -2,18 +2,63 @@ import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Circle, Line, Path } from 'react-native-svg';
 
 import { useColorScheme } from '@/components/useColorScheme';
 import { getTokens } from '@/theme/tokens';
 
-type TabMeta = { icon: keyof typeof Ionicons.glyphMap; label: string };
+// ─── Life buoy icon ──────────────────────────────────────────────────────────
+// Outer ring + inner ring + 2 filled alternating arc panels + 4 diagonal spokes.
+// Panel maths: R=8.5 r=4 center=(12,12) dividers at 45°/135°/225°/315°
+//   outer pts: 45°=(18.01,18.01) 135°=(5.99,18.01) 225°=(5.99,5.99) 315°=(18.01,5.99)
+//   inner pts: 45°=(14.83,14.83) 135°=(9.17,14.83) 225°=(9.17,9.17) 315°=(14.83,9.17)
+function LifeBuoyIcon({ color, size = 22 }: { color: string; size?: number }) {
+  const sw = 1.55;
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      {/* Filled panels: right arc (315°→45°) and left arc (135°→225°) */}
+      <Path
+        d="M18.01 5.99 A8.5 8.5 0 0 1 18.01 18.01 L14.83 14.83 A4 4 0 0 0 14.83 9.17 Z"
+        fill={color} fillOpacity={0.22}
+      />
+      <Path
+        d="M5.99 18.01 A8.5 8.5 0 0 1 5.99 5.99 L9.17 9.17 A4 4 0 0 0 9.17 14.83 Z"
+        fill={color} fillOpacity={0.22}
+      />
+      {/* Rings */}
+      <Circle cx="12" cy="12" r="8.5" stroke={color} strokeWidth={sw} />
+      <Circle cx="12" cy="12" r="4"   stroke={color} strokeWidth={sw} />
+      {/* Diagonal dividers — inner ring edge → outer ring edge */}
+      <Line x1="14.83" y1="9.17"  x2="18.01" y2="5.99"  stroke={color} strokeWidth={sw} strokeLinecap="round" />
+      <Line x1="14.83" y1="14.83" x2="18.01" y2="18.01" stroke={color} strokeWidth={sw} strokeLinecap="round" />
+      <Line x1="9.17"  y1="14.83" x2="5.99"  y2="18.01" stroke={color} strokeWidth={sw} strokeLinecap="round" />
+      <Line x1="9.17"  y1="9.17"  x2="5.99"  y2="5.99"  stroke={color} strokeWidth={sw} strokeLinecap="round" />
+    </Svg>
+  );
+}
 
-const VISIBLE_TABS: Record<string, TabMeta> = {
-  home:      { icon: 'sunny-outline',        label: 'Today'     },
-  panic:     { icon: 'help-circle-outline',  label: 'Support'   },
-  resources: { icon: 'book-outline',         label: 'Resources' },
+// ─── Tab metadata ─────────────────────────────────────────────────────────────
+type TabMeta = {
+  renderIcon: (color: string) => React.ReactNode;
+  label: string;
 };
 
+const VISIBLE_TABS: Record<string, TabMeta> = {
+  home: {
+    renderIcon: (c) => <Ionicons name="sunny-outline" size={22} color={c} />,
+    label: 'Today',
+  },
+  panic: {
+    renderIcon: (c) => <LifeBuoyIcon color={c} size={22} />,
+    label: 'Support',
+  },
+  resources: {
+    renderIcon: (c) => <Ionicons name="book-outline" size={22} color={c} />,
+    label: 'Resources',
+  },
+};
+
+// ─── Tab bar ──────────────────────────────────────────────────────────────────
 export function AppTabBar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   const scheme = useColorScheme();
@@ -23,7 +68,6 @@ export function AppTabBar({ state, navigation }: BottomTabBarProps) {
   const activeColor   = t.color.accent;
   const inactiveColor = t.color.textMuted;
 
-  // Glassmorphism colours — semi-transparent so screen content tints through
   const pillBg     = isDark ? 'rgba(14, 18, 34, 0.92)' : 'rgba(255, 255, 255, 0.93)';
   const pillBorder = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.07)';
   const fabBg      = isDark ? 'rgba(22, 26, 46, 0.96)' : 'rgba(255, 255, 255, 0.96)';
@@ -40,8 +84,6 @@ export function AppTabBar({ state, navigation }: BottomTabBarProps) {
   const visibleRoutes = state.routes.filter((r) => VISIBLE_TABS[r.name]);
 
   return (
-    // Outer shell is transparent — React Navigation still measures the height
-    // correctly so screens get the right bottom padding automatically.
     <View style={[styles.outer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
       <View style={styles.row}>
 
@@ -70,7 +112,7 @@ export function AppTabBar({ state, navigation }: BottomTabBarProps) {
                 style={styles.tab}
                 accessibilityRole="button"
                 accessibilityState={{ selected: isFocused }}>
-                <Ionicons name={meta.icon} size={22} color={color} />
+                {meta.renderIcon(color)}
                 <Text
                   style={[
                     styles.label,
@@ -101,19 +143,15 @@ export function AppTabBar({ state, navigation }: BottomTabBarProps) {
 }
 
 const styles = StyleSheet.create({
-  // Transparent wrapper — preserves React Navigation's height accounting
   outer: {
     paddingHorizontal: 16,
     paddingTop: 10,
   },
-
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
   },
-
-  // Pill capsule
   pill: {
     flex: 1,
     flexDirection: 'row',
@@ -122,21 +160,16 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 4,
   },
-
-  // Individual tab inside the pill
   tab: {
     flex: 1,
     alignItems: 'center',
     gap: 3,
     paddingVertical: 6,
   },
-
   label: {
     fontSize: 11,
     lineHeight: 14,
   },
-
-  // Standalone FAB circle
   fab: {
     width: 54,
     height: 54,
