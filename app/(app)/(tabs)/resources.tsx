@@ -3,6 +3,7 @@ import type { Href } from 'expo-router';
 import { useRouter } from 'expo-router';
 import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useEffect } from 'react';
+import Svg, { Path } from 'react-native-svg';
 
 import { Screen } from '@/components/ui/Screen';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -28,19 +29,33 @@ function alpha(hex: string, opacity: number): string {
   return `${hex}${a}`;
 }
 
+// ─── WavesIcon — three wavy lines matching the mockup ────────────────────────
+function WavesIcon({ color, size = 20 }: { color: string; size?: number }) {
+  // One smooth S-curve per line: hump up on left half, hump down on right half
+  const wave = (cy: number) =>
+    `M2 ${cy} C5.5 ${cy - 2.5} 9.5 ${cy - 2.5} 12 ${cy} C14.5 ${cy + 2.5} 18.5 ${cy + 2.5} 22 ${cy}`;
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d={wave(6)}  stroke={color} strokeWidth={1.6} strokeLinecap="round" />
+      <Path d={wave(12)} stroke={color} strokeWidth={1.6} strokeLinecap="round" />
+      <Path d={wave(18)} stroke={color} strokeWidth={1.6} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
 // ─── SectionHeader ────────────────────────────────────────────────────────────
 type SectionHeaderProps = {
-  icon: keyof typeof Ionicons.glyphMap;
+  iconComponent: React.ReactNode;
   title: string;
   accent: string;
   scheme: ColorSchemeName;
 };
 
-function SectionHeader({ icon, title, accent, scheme }: SectionHeaderProps) {
+function SectionHeader({ iconComponent, title, accent, scheme }: SectionHeaderProps) {
   const t = getTokens(scheme);
   return (
     <View style={styles.sectionHeader}>
-      <Ionicons name={icon} size={20} color={accent} />
+      {iconComponent}
       <Text style={[styles.sectionTitle, { color: t.color.textPrimary, fontFamily: t.typeface.uiSemibold }]}>
         {title}
       </Text>
@@ -215,7 +230,7 @@ export default function ResourcesTabScreen() {
 
       {/* ── Understand ────────────────────────────────────── */}
       <View style={styles.section}>
-        <SectionHeader icon="hardware-chip-outline" title="Understand" accent={ua} scheme={scheme} />
+        <SectionHeader iconComponent={<Ionicons name="hardware-chip-outline" size={20} color={ua} />} title="Understand" accent={ua} scheme={scheme} />
         <View style={styles.twoColRow}>
           <UnderstandCard
             icon="library-outline"
@@ -242,7 +257,7 @@ export default function ResourcesTabScreen() {
 
       {/* ── Shift your State ──────────────────────────────── */}
       <View style={styles.section}>
-        <SectionHeader icon="water-outline" title="Shift your State" accent={sa} scheme={scheme} />
+        <SectionHeader iconComponent={<WavesIcon color={sa} size={20} />} title="Shift your State" accent={sa} scheme={scheme} />
         <View style={styles.threeColRow}>
           <ShiftCard
             icon="timer-outline"
@@ -279,7 +294,7 @@ export default function ResourcesTabScreen() {
 
       {/* ── Go Deeper ─────────────────────────────────────── */}
       <View style={styles.section}>
-        <SectionHeader icon="book-outline" title="Go Deeper" accent={da} scheme={scheme} />
+        <SectionHeader iconComponent={<Ionicons name="book-outline" size={20} color={da} />} title="Go Deeper" accent={da} scheme={scheme} />
         <ModuleCard
           title="Module 2: The Illusion of Relief"
           description="Why nicotine seems to help—and why it never actually does."
