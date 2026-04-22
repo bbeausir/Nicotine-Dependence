@@ -37,6 +37,40 @@ function LifeBuoyIcon({ color, size = 22 }: { color: string; size?: number }) {
   );
 }
 
+// ─── Open book icon ───────────────────────────────────────────────────────────
+// Two page panels meeting at a centre spine + 3 text lines per page.
+function BookIcon({ color, size = 22 }: { color: string; size?: number }) {
+  const sw  = 1.55;  // page outline weight
+  const tlw = 1.05;  // text-line weight
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      {/* Left page — quad from spine to outer edge */}
+      <Path
+        d="M12 7 L4 6.5 L4 19.5 L12 20 Z"
+        stroke={color} strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"
+      />
+      {/* Right page — mirror */}
+      <Path
+        d="M12 7 L20 6.5 L20 19.5 L12 20 Z"
+        stroke={color} strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"
+      />
+      {/* Spine crease — slight V so it reads as a bound book */}
+      <Path
+        d="M12 7 Q11.2 13 12 20"
+        stroke={color} strokeWidth={sw} strokeLinecap="round" fill="none"
+      />
+      {/* Left page text lines */}
+      <Line x1="5.5" y1="10"   x2="10.5" y2="10.3" stroke={color} strokeWidth={tlw} strokeLinecap="round" />
+      <Line x1="5.5" y1="12.5" x2="10.5" y2="12.8" stroke={color} strokeWidth={tlw} strokeLinecap="round" />
+      <Line x1="5.5" y1="15"   x2="9"    y2="15.2" stroke={color} strokeWidth={tlw} strokeLinecap="round" />
+      {/* Right page text lines */}
+      <Line x1="13.5" y1="10.3" x2="18.5" y2="10"   stroke={color} strokeWidth={tlw} strokeLinecap="round" />
+      <Line x1="13.5" y1="12.8" x2="18.5" y2="12.5" stroke={color} strokeWidth={tlw} strokeLinecap="round" />
+      <Line x1="13.5" y1="15.2" x2="17"   y2="15"   stroke={color} strokeWidth={tlw} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
 // ─── Tab metadata ─────────────────────────────────────────────────────────────
 type TabMeta = {
   renderIcon: (color: string) => React.ReactNode;
@@ -53,7 +87,7 @@ const VISIBLE_TABS: Record<string, TabMeta> = {
     label: 'Support',
   },
   resources: {
-    renderIcon: (c) => <Ionicons name="book-outline" size={22} color={c} />,
+    renderIcon: (c) => <BookIcon color={c} size={22} />,
     label: 'Resources',
   },
 };
