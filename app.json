@@ -7,13 +7,23 @@
     "icon": "./assets/images/icon.png",
     "scheme": "nicotineapp",
     "userInterfaceStyle": "automatic",
+    "deepLinking": {
+      "enabled": true,
+      "prefixes": [
+        "https://auth.expo.dev/@bbeausir/nicotine-app",
+        "nicotineapp://"
+      ]
+    },
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#0b0e14"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "associatedDomains": [
+        "applinks:auth.expo.dev"
+      ]
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +31,21 @@
         "backgroundColor": "#0b0e14"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.benbeausir.nicotineapp"
+      "package": "com.benbeausir.nicotineapp",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": {
+            "scheme": "https",
+            "host": "auth.expo.dev",
+            "pathPrefix": "/@bbeausir/nicotine-app"
+          },
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     },
     "web": {
       "bundler": "metro",

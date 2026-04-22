@@ -361,17 +361,16 @@ describe('AuthProvider', () => {
     await unmountRenderer(renderer);
   });
 
-  it('resetPassword returns success and error results and passes the sign-in redirect URL', async () => {
+  it('resetPassword returns success and error results and passes the HTTPS redirect URL', async () => {
     const successClient = createMockClient();
     supabaseMocks.getSupabaseClient.mockReturnValue(successClient.client);
     supabaseMocks.getSupabaseConfigError.mockReturnValue(null);
-    linkingMocks.createURL.mockReturnValue('myapp://sign-in');
 
     const renderer = await renderProvider();
 
     await expect(getAuth().resetPassword('user@example.com')).resolves.toEqual({ error: null });
     expect(successClient.client.auth.resetPasswordForEmail).toHaveBeenCalledWith('user@example.com', {
-      redirectTo: 'myapp://sign-in',
+      redirectTo: 'https://auth.expo.dev/@bbeausir/nicotine-app/callback',
     });
 
     const errorClient = createMockClient({ resetPasswordError: 'reset failed' });

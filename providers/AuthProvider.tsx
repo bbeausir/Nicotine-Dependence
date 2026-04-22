@@ -180,7 +180,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const { error } = await client.auth.resetPasswordForEmail(email, {
-      redirectTo: Linking.createURL('/update-password'),
+      redirectTo: 'https://auth.expo.dev/@bbeausir/nicotine-app/callback',
     });
     if (error) {
       return { error: error.message };

@@ -1,4 +1,5 @@
 import { SQLiteDatabase } from 'expo-sqlite';
+import { encryptInsightText, decryptInsightText, deleteEncryptionKey } from '@/lib/crypto/insightEncryption';
 
 export interface InsightEntry {
   id: string;
@@ -6,6 +7,7 @@ export interface InsightEntry {
   tag: string;
   timestamp: number;
   createdAt: string;
+  text_key_id?: string;
 }
 
 export interface InsightTag {
@@ -21,6 +23,7 @@ export async function initializeDatabase(db: SQLiteDatabase): Promise<void> {
     CREATE TABLE IF NOT EXISTS insight_entries (
       id TEXT PRIMARY KEY,
       text TEXT NOT NULL,
+      text_key_id TEXT,
       tag TEXT NOT NULL,
       timestamp INTEGER NOT NULL,
       createdAt TEXT NOT NULL
@@ -60,9 +63,11 @@ export async function addInsightEntry(
   const timestamp = Date.now();
   const createdAt = new Date(timestamp).toISOString();
 
+  const { encrypted, keyId } = await encryptInsightText(text);
+
   await db.runAsync(
-    'INSERT INTO insight_entries (id, text, tag, timestamp, createdAt) VALUES (?, ?, ?, ?, ?)',
-    [id, text, tag, timestamp, createdAt]
+    'INSERT INTO insight_entries (id, text, text_key_id, tag, timestamp, createdAt) VALUES (?, ?, ?, ?, ?, ?)',
+    [id, encrypted, keyId, tag, timestamp, createdAt]
   );
 
   await db.runAsync(
@@ -70,7 +75,7 @@ export async function addInsightEntry(
     [timestamp, tag]
   );
 
-  return { id, text, tag, timestamp, createdAt };
+  return { id, text, tag, timestamp, createdAt, text_key_id: keyId };
 }
 
 export async function getInsightEntries(
@@ -84,7 +89,17 @@ export async function getInsightEntries(
   const params = filterTag ? [filterTag] : [];
   const results = await db.getAllAsync<InsightEntry>(query, params);
 
-  return results || [];
+  if (!results) return [];
+
+  // Decrypt text for each entry
+  return Promise.all(
+    results.map(async (entry) => ({
+      ...entry,
+      text: entry.text_key_id
+        ? await decryptInsightText(entry.text, entry.text_key_id)
+        : entry.text, // Fallback for unencrypted entries from migrations
+    }))
+  );
 }
 
 export async function getInsightTags(db: SQLiteDatabase): Promise<InsightTag[]> {
