@@ -32,7 +32,6 @@ export default function AppGroupLayout() {
   return (
     <Stack
       screenOptions={{
-        headerBackTitleVisible: false,
         headerLeft: ({ tintColor }) => (
           <Pressable onPress={() => router.back()} style={{ padding: 8 }}>
             <Ionicons name="chevron-back" size={24} color={tintColor} />

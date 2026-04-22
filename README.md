@@ -39,8 +39,9 @@ Authenticated users can enter and use the app without taking the assessment. `on
 
 ## Tech Stack
 
-- Expo 54
-- React Native 0.81
+- Expo 55
+- React Native 0.83
+- React 19.2
 - Expo Router
 - TypeScript
 - React Hook Form
@@ -126,7 +127,7 @@ This requires a locally linked Supabase project (`npx supabase@latest link --pro
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20.19+
 - npm
 - Expo-compatible iOS simulator, Android emulator, or Expo Go
 
