@@ -64,7 +64,7 @@ export default function HomeTabScreen() {
           {greeting}
         </Text>
         <Text style={[styles.subgreeting, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
-          {stats?.stage === 'countdown' ? 'Almost there.' : 'Keep going strong!'}
+          {stats?.stage === 'countdown' ? 'Almost there.' : 'Every day matters.'}
         </Text>
       </View>
 

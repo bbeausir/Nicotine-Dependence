@@ -1,49 +1,19 @@
-import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
+
+import { AppTabBar } from '@/components/ui/AppTabBar';
 
 export default function InAppTabsLayout() {
   return (
-    <Tabs initialRouteName="home" screenOptions={{ headerShown: false, tabBarLabelPosition: 'below-icon' }}>
-      <Tabs.Screen
-        name="home"
-        options={{
-          title: 'Home',
-          tabBarAccessibilityLabel: 'Home tab',
-          tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="social"
-        options={{
-          title: 'Social',
-          tabBarAccessibilityLabel: 'Social feed tab',
-          tabBarIcon: ({ color, size }) => <Ionicons name="people-outline" color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="panic"
-        options={{
-          title: 'SOS',
-          tabBarAccessibilityLabel: 'SOS panic support tab',
-          tabBarIcon: ({ color, size }) => <Ionicons name="alert-circle-outline" color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="resources"
-        options={{
-          title: 'Resources',
-          tabBarAccessibilityLabel: 'Resources tab',
-          tabBarIcon: ({ color, size }) => <Ionicons name="library-outline" color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarAccessibilityLabel: 'Settings tab',
-          tabBarIcon: ({ color, size }) => <Ionicons name="settings-outline" color={color} size={size} />,
-        }}
-      />
+    <Tabs
+      initialRouteName="home"
+      tabBar={(props) => <AppTabBar {...props} />}
+      screenOptions={{ headerShown: false }}>
+      <Tabs.Screen name="home" />
+      <Tabs.Screen name="panic" />
+      <Tabs.Screen name="resources" />
+      {/* social and settings remain routable but hidden from the tab bar */}
+      <Tabs.Screen name="social" options={{ tabBarButton: () => null }} />
+      <Tabs.Screen name="settings" options={{ tabBarButton: () => null }} />
     </Tabs>
   );
 }

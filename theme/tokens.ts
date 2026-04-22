@@ -9,7 +9,7 @@ export type ThemeTokens = {
     background: string;
     /** Subtle gradient top stop (screen vignette) */
     backgroundGradientTop: string;
-    /** Soft gold haze for ambient blobs */
+    /** Ambient glow for blob decorations */
     glowAccent: string;
     surface: string;
     surfaceElevated: string;
@@ -20,6 +20,12 @@ export type ThemeTokens = {
     accentMuted: string;
     border: string;
     danger: string;
+    /** Per-section accent colors for the Resources hub */
+    sectionAccent: {
+      understand: string;
+      shift: string;
+      deepen: string;
+    };
   };
   typeface: {
     display: string;
@@ -80,18 +86,23 @@ const typeface = {
 
 const dark: ThemeTokens = {
   color: {
-    background: '#0b0e14',
-    backgroundGradientTop: '#121722',
-    glowAccent: 'rgba(181, 147, 91, 0.09)',
-    surface: '#121820',
-    surfaceElevated: '#1a222c',
+    background: '#0a0c14',
+    backgroundGradientTop: '#10141f',
+    glowAccent: 'rgba(108, 99, 255, 0.08)',
+    surface: '#111520',
+    surfaceElevated: '#181d2e',
     textPrimary: '#ffffff',
     textSecondary: '#a8b0bd',
     textMuted: '#7a8494',
-    accent: '#b5935b',
-    accentMuted: '#7d6540',
-    border: '#252d3a',
+    accent: '#9c8fff',
+    accentMuted: '#5c5490',
+    border: '#222840',
     danger: '#e85d5d',
+    sectionAccent: {
+      understand: '#a78bfa',
+      shift: '#2dd4bf',
+      deepen: '#60a5fa',
+    },
   },
   typeface,
   space,
@@ -101,18 +112,23 @@ const dark: ThemeTokens = {
 
 const light: ThemeTokens = {
   color: {
-    background: '#f6f7f9',
+    background: '#f4f5f8',
     backgroundGradientTop: '#ffffff',
-    glowAccent: 'rgba(37, 99, 235, 0.06)',
+    glowAccent: 'rgba(108, 99, 255, 0.05)',
     surface: '#ffffff',
     surfaceElevated: '#ffffff',
     textPrimary: '#12151a',
     textSecondary: '#4a5563',
     textMuted: '#7a8494',
-    accent: '#2563eb',
-    accentMuted: '#93b4ff',
+    accent: '#6c63ff',
+    accentMuted: '#c5c0ff',
     border: '#e2e6ec',
     danger: '#dc2626',
+    sectionAccent: {
+      understand: '#7c3aed',
+      shift: '#0d9488',
+      deepen: '#2563eb',
+    },
   },
   typeface,
   space,

@@ -42,6 +42,12 @@ export default function AppGroupLayout() {
       <Stack.Screen name="settings/profile" options={{ title: 'Edit Profile' }} />
       <Stack.Screen name="settings/notifications" options={{ title: 'Notifications' }} />
       <Stack.Screen name="settings/privacy" options={{ title: 'Privacy & Data' }} />
+      <Stack.Screen name="insights" options={{ title: 'Insights Library' }} />
+      <Stack.Screen name="myths" options={{ title: 'Myth Dissolutions' }} />
+      <Stack.Screen name="craving-wave" options={{ title: 'Craving Wave Timer' }} />
+      <Stack.Screen name="grounding" options={{ title: '5-4-3-2-1 Grounding' }} />
+      <Stack.Screen name="pattern-break" options={{ title: 'Pattern Break' }} />
+      <Stack.Screen name="course-module" options={{ title: 'Module 2: The Illusion of Relief' }} />
     </Stack>
   );
 }
