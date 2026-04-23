@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FormError } from '@/components/ui/FormError';
 import { PrimaryButton } from '@/components/ui/PrimaryButton';
@@ -16,6 +17,7 @@ export default function ProfileSettingsScreen() {
   const scheme = useColorScheme();
   const t = getTokens(scheme);
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { profile, isLoading, error, save } = useProfile();
 
   const [displayNameInput, setDisplayNameInput] = useState('');
@@ -109,7 +111,26 @@ export default function ProfileSettingsScreen() {
   };
 
   return (
-    <Screen scroll contentContainerStyle={styles.content}>
+    <View style={{ flex: 1 }}>
+      {/* Back button overlay */}
+      <Pressable
+        onPress={() => router.back()}
+        style={[
+          styles.backButton,
+          {
+            top: insets.top + 8,
+            left: 8,
+          },
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel="Go back">
+        <Ionicons name="chevron-back" size={24} color={t.color.textPrimary} />
+      </Pressable>
+
+      {/* Spacer for back button */}
+      <View style={styles.spacer} />
+
+      <Screen scroll contentContainerStyle={styles.content}>
       <View style={styles.textBlock}>
         <Text style={[styles.title, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
           Edit profile
@@ -261,6 +282,7 @@ export default function ProfileSettingsScreen() {
         />
       )}
     </Screen>
+    </View>
   );
 }
 
@@ -330,4 +352,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   hint: { fontSize: 12, lineHeight: 16 },
+  backButton: {
+    position: 'absolute',
+    zIndex: 10,
+    padding: 8,
+  },
+  spacer: {
+    height: 44,
+  },
 });
