@@ -1,12 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { Href } from 'expo-router';
 import { useRouter } from 'expo-router';
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { useEffect } from 'react';
 import Svg, { Path } from 'react-native-svg';
 
 import { Screen } from '@/components/ui/Screen';
 import { useColorScheme } from '@/components/useColorScheme';
+import type { ResourceIllustrationId } from '@/features/resources/content';
+import { resourcesContent } from '@/features/resources/content';
+import { ResourceIllustration } from '@/features/resources/illustrations';
 import type { ColorSchemeName } from '@/theme/tokens';
 import { getTokens } from '@/theme/tokens';
 
@@ -47,11 +49,10 @@ function WavesIcon({ color, size = 20 }: { color: string; size?: number }) {
 type SectionHeaderProps = {
   iconComponent: React.ReactNode;
   title: string;
-  accent: string;
   scheme: ColorSchemeName;
 };
 
-function SectionHeader({ iconComponent, title, accent, scheme }: SectionHeaderProps) {
+function SectionHeader({ iconComponent, title, scheme }: SectionHeaderProps) {
   const t = getTokens(scheme);
   return (
     <View style={styles.sectionHeader}>
@@ -78,22 +79,39 @@ type UnderstandCardProps = {
   title: string;
   description: string;
   cta: string;
+  illustration?: ResourceIllustrationId;
   accent: string;
   cardBg: string;
   scheme: ColorSchemeName;
   onPress: () => void;
 };
 
-function UnderstandCard({ icon, title, description, cta, accent, cardBg, scheme, onPress }: UnderstandCardProps) {
+function UnderstandCard({
+  icon,
+  title,
+  description,
+  cta,
+  illustration,
+  accent,
+  cardBg,
+  scheme,
+  onPress,
+}: UnderstandCardProps) {
   const t = getTokens(scheme);
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.82}
       style={[styles.understandCard, { backgroundColor: cardBg, borderColor: t.color.border }]}>
-      <View style={[styles.understandIconArea, { backgroundColor: alpha(accent, 0.12) }]}>
-        <Ionicons name={icon} size={44} color={accent} />
-      </View>
+      {illustration ? (
+        <View style={styles.understandThumbnail}>
+          <ResourceIllustration id={illustration} width={220} height={110} />
+        </View>
+      ) : (
+        <View style={[styles.understandIconArea, { backgroundColor: alpha(accent, 0.12) }]}>
+          <Ionicons name={icon} size={44} color={accent} />
+        </View>
+      )}
       <View style={styles.understandBody}>
         <Text style={[styles.cardTitle, { color: t.color.textPrimary, fontFamily: t.typeface.uiSemibold }]}>
           {title}
@@ -116,22 +134,39 @@ type ShiftCardProps = {
   title: string;
   description: string;
   duration: string;
+  illustration?: ResourceIllustrationId;
   accent: string;
   cardBg: string;
   scheme: ColorSchemeName;
   onPress: () => void;
 };
 
-function ShiftCard({ icon, title, description, duration, accent, cardBg, scheme, onPress }: ShiftCardProps) {
+function ShiftCard({
+  icon,
+  title,
+  description,
+  duration,
+  illustration,
+  accent,
+  cardBg,
+  scheme,
+  onPress,
+}: ShiftCardProps) {
   const t = getTokens(scheme);
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.82}
       style={[styles.shiftCard, { backgroundColor: cardBg, borderColor: t.color.border }]}>
-      <View style={[styles.shiftIconCircle, { backgroundColor: alpha(accent, 0.14) }]}>
-        <Ionicons name={icon} size={26} color={accent} />
-      </View>
+      {illustration ? (
+        <View style={styles.shiftThumbnail}>
+          <ResourceIllustration id={illustration} width={52} height={52} rounded={26} />
+        </View>
+      ) : (
+        <View style={[styles.shiftIconCircle, { backgroundColor: alpha(accent, 0.14) }]}>
+          <Ionicons name={icon} size={26} color={accent} />
+        </View>
+      )}
       <Text style={[styles.shiftTitle, { color: t.color.textPrimary, fontFamily: t.typeface.uiSemibold }]}>
         {title}
       </Text>
@@ -152,12 +187,22 @@ type ModuleCardProps = {
   description: string;
   lessonsCompleted: number;
   totalLessons: number;
+  illustration: ResourceIllustrationId;
   accent: string;
   scheme: ColorSchemeName;
   onPress: () => void;
 };
 
-function ModuleCard({ title, description, lessonsCompleted, totalLessons, accent, scheme, onPress }: ModuleCardProps) {
+function ModuleCard({
+  title,
+  description,
+  lessonsCompleted,
+  totalLessons,
+  illustration,
+  accent,
+  scheme,
+  onPress,
+}: ModuleCardProps) {
   const t = getTokens(scheme);
   const progress = lessonsCompleted / totalLessons;
   return (
@@ -167,7 +212,7 @@ function ModuleCard({ title, description, lessonsCompleted, totalLessons, accent
       style={[styles.moduleCard, { backgroundColor: t.color.surface, borderColor: t.color.border }]}>
       {/* Thumbnail */}
       <View style={[styles.moduleThumbnail, { backgroundColor: alpha(accent, 0.18) }]}>
-        <Ionicons name="flag-outline" size={36} color={accent} />
+        <ResourceIllustration id={illustration} width={110} height={140} rounded={0} />
       </View>
       {/* Content */}
       <View style={styles.moduleContent}>
@@ -197,8 +242,10 @@ function ModuleCard({ title, description, lessonsCompleted, totalLessons, accent
 // ─── Screen ───────────────────────────────────────────────────────────────────
 export default function ResourcesTabScreen() {
   const router = useRouter();
+  const { width } = useWindowDimensions();
   const scheme = useColorScheme();
   const t = getTokens(scheme);
+  const isNarrow = width < 390;
 
   const db = Platform.OS !== 'web' ? useSQLiteContext?.() : null;
   useEffect(() => {
@@ -230,79 +277,58 @@ export default function ResourcesTabScreen() {
 
       {/* ── Understand ────────────────────────────────────── */}
       <View style={styles.section}>
-        <SectionHeader iconComponent={<Ionicons name="hardware-chip-outline" size={20} color={ua} />} title="Understand" accent={ua} scheme={scheme} />
-        <View style={styles.twoColRow}>
-          <UnderstandCard
-            icon="library-outline"
-            title="Insights Library"
-            description="Short reads and key insights to expand your perspective."
-            cta="Browse"
-            accent={ua}
-            cardBg={understandCardBg}
-            scheme={scheme}
-            onPress={() => router.push('/insights' as Href)}
-          />
-          <UnderstandCard
-            icon="analytics-outline"
-            title="Myth Dissolutions"
-            description="See through the false beliefs that keep nicotine's trap alive."
-            cta="Explore"
-            accent={ua}
-            cardBg={understandCardBg}
-            scheme={scheme}
-            onPress={() => router.push('/myths' as Href)}
-          />
+        <SectionHeader iconComponent={<Ionicons name="hardware-chip-outline" size={20} color={ua} />} title="Understand" scheme={scheme} />
+        <View style={[styles.twoColRow, isNarrow && styles.stackedRow]}>
+          {resourcesContent.understand.map((card) => (
+            <UnderstandCard
+              key={card.href}
+              icon={card.icon}
+              title={card.title}
+              description={card.description}
+              cta={card.cta}
+              illustration={card.illustration}
+              accent={ua}
+              cardBg={understandCardBg}
+              scheme={scheme}
+              onPress={() => router.push(card.href)}
+            />
+          ))}
         </View>
       </View>
 
       {/* ── Shift your State ──────────────────────────────── */}
       <View style={styles.section}>
-        <SectionHeader iconComponent={<WavesIcon color={sa} size={20} />} title="Shift your State" accent={sa} scheme={scheme} />
-        <View style={styles.threeColRow}>
-          <ShiftCard
-            icon="timer-outline"
-            title="Craving Wave Timer"
-            description="Ride the wave. It always passes."
-            duration="2-5 min"
-            accent={sa}
-            cardBg={shiftCardBg}
-            scheme={scheme}
-            onPress={() => router.push('/craving-wave' as Href)}
-          />
-          <ShiftCard
-            icon="leaf-outline"
-            title="5-4-3-2-1 Grounding"
-            description="Come back to what's real, right now."
-            duration="1 min"
-            accent={sa}
-            cardBg={shiftCardBg}
-            scheme={scheme}
-            onPress={() => router.push('/grounding' as Href)}
-          />
-          <ShiftCard
-            icon="game-controller-outline"
-            title="Pattern Break"
-            description="Interrupt the loop with a quick reset."
-            duration="2 min"
-            accent={sa}
-            cardBg={shiftCardBg}
-            scheme={scheme}
-            onPress={() => router.push('/pattern-break' as Href)}
-          />
+        <SectionHeader iconComponent={<WavesIcon color={sa} size={20} />} title="Shift your State" scheme={scheme} />
+        <View style={[styles.threeColRow, isNarrow && styles.stackedRow]}>
+          {resourcesContent.shift.map((card) => (
+            <ShiftCard
+              key={card.href}
+              icon={card.icon}
+              title={card.title}
+              description={card.description}
+              duration={card.duration}
+              illustration={card.illustration}
+              accent={sa}
+              cardBg={shiftCardBg}
+              scheme={scheme}
+              onPress={() => router.push(card.href)}
+            />
+          ))}
         </View>
       </View>
 
       {/* ── Go Deeper ─────────────────────────────────────── */}
       <View style={styles.section}>
-        <SectionHeader iconComponent={<Ionicons name="book-outline" size={20} color={da} />} title="Go Deeper" accent={da} scheme={scheme} />
+        <SectionHeader iconComponent={<Ionicons name="book-outline" size={20} color={da} />} title="Go Deeper" scheme={scheme} />
         <ModuleCard
-          title="Module 2: The Illusion of Relief"
-          description="Why nicotine seems to help—and why it never actually does."
-          lessonsCompleted={2}
-          totalLessons={6}
+          title={resourcesContent.deepen.title}
+          description={resourcesContent.deepen.description}
+          lessonsCompleted={resourcesContent.deepen.lessonsCompleted}
+          totalLessons={resourcesContent.deepen.totalLessons}
+          illustration={resourcesContent.deepen.illustration}
           accent={da}
           scheme={scheme}
-          onPress={() => router.push('/course-module' as Href)}
+          onPress={() => router.push(resourcesContent.deepen.href)}
         />
       </View>
     </Screen>
@@ -381,6 +407,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 16,
     overflow: 'hidden',
+    minHeight: 228,
+  },
+  understandThumbnail: {
+    width: '100%',
+    height: 110,
+    overflow: 'hidden',
   },
   understandIconArea: {
     alignItems: 'center',
@@ -406,12 +438,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
   },
+  stackedRow: {
+    flexDirection: 'column',
+  },
   shiftCard: {
     flex: 1,
     borderWidth: 1,
     borderRadius: 16,
     padding: 12,
     gap: 8,
+    minHeight: 188,
+  },
+  shiftThumbnail: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    overflow: 'hidden',
   },
   shiftIconCircle: {
     width: 52,
@@ -446,11 +488,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 16,
     overflow: 'hidden',
+    minHeight: 140,
   },
   moduleThumbnail: {
     width: 110,
-    alignItems: 'center',
-    justifyContent: 'center',
+    overflow: 'hidden',
   },
   moduleContent: {
     flex: 1,
