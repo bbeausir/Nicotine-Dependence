@@ -4,17 +4,28 @@ import { CircleActionButton } from '@/components/ui/CircleActionButton';
 import { Screen } from '@/components/ui/Screen';
 import { StatsCard } from '@/components/ui/StatsCard';
 import { useColorScheme } from '@/components/useColorScheme';
+import { useLoopMapStorage } from '@/features/module-1/hooks/useLoopMapStorage';
+import { contextualHint } from '@/features/module-1/loopMap';
 import { getTokens } from '@/theme/tokens';
 
 export default function PanicTabScreen() {
   const scheme = useColorScheme();
   const t = getTokens(scheme);
+  const { loopMap } = useLoopMapStorage();
 
   return (
     <Screen scroll includeBottomInset={false} contentContainerStyle={styles.content}>
       <Text style={[styles.heading, { color: t.color.textPrimary, fontFamily: t.typeface.display }]}>
         {'How can I help\nyou right now?'}
       </Text>
+
+      {loopMap && (
+        <View style={[styles.contextualHint, { backgroundColor: t.color.surfaceElevated, borderColor: t.color.border }]}>
+          <Text style={[styles.hintText, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
+            {contextualHint(loopMap)}
+          </Text>
+        </View>
+      )}
 
       <View style={styles.cluster}>
         <View style={styles.topRow}>
@@ -86,6 +97,16 @@ const styles = StyleSheet.create({
   motivational: {
     fontSize: 16,
     lineHeight: 26,
+    textAlign: 'center',
+  },
+  contextualHint: {
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+  },
+  hintText: {
+    fontSize: 14,
+    lineHeight: 20,
     textAlign: 'center',
   },
 });

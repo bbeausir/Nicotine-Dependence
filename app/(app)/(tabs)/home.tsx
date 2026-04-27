@@ -9,6 +9,8 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { LogCravingSheet } from '@/features/home/components/LogCravingSheet';
 import { useQuitStats } from '@/features/home/useQuitStats';
 import { useProfile } from '@/features/profile/useProfile';
+import { useLoopMapStorage } from '@/features/module-1/hooks/useLoopMapStorage';
+import { summarizePattern } from '@/features/module-1/loopMap';
 import { getTokens } from '@/theme/tokens';
 
 const RING_SIZE = 200;
@@ -25,6 +27,7 @@ export default function HomeTabScreen() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const { profile, isLoading } = useProfile();
   const stats = useQuitStats(profile?.quit_date ?? null, profile?.daily_cost ?? null);
+  const { loopMap } = useLoopMapStorage();
 
   const firstName = profile?.display_name?.trim().split(/\s+/)[0] ?? '';
   const greeting = firstName ? `Hi, ${firstName}` : 'Hi there';
@@ -199,6 +202,18 @@ export default function HomeTabScreen() {
 
       </View>
 
+      {/* Your Pattern card — surfaces the saved Loop Map insight on Today */}
+      {loopMap && loopMap.triggers.length > 0 && (
+        <View style={[styles.patternCard, { backgroundColor: t.color.surface, borderColor: t.color.border }]}>
+          <Text style={[styles.patternTitle, { color: t.color.textPrimary, fontFamily: t.typeface.uiSemibold }]}>
+            Your pattern
+          </Text>
+          <Text style={[styles.patternText, { color: t.color.textSecondary, fontFamily: t.typeface.ui }]}>
+            {summarizePattern(loopMap)}
+          </Text>
+        </View>
+      )}
+
       {/* CTA */}
       <PrimaryButton onPress={() => setSheetOpen(true)}>Log a Craving</PrimaryButton>
 
@@ -335,5 +350,19 @@ const styles = StyleSheet.create({
   trendChevron: {
     fontSize: 18,
     lineHeight: 20,
+  },
+  patternCard: {
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 14,
+    gap: 8,
+  },
+  patternTitle: {
+    fontSize: 14,
+    lineHeight: 19,
+  },
+  patternText: {
+    fontSize: 13,
+    lineHeight: 18,
   },
 });

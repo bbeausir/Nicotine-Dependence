@@ -16,6 +16,15 @@ export interface InsightTag {
   lastUsed: number;
 }
 
+export interface LoopMap {
+  id: string;
+  top_triggers: string;
+  perceived_benefit: string;
+  later_outcome: string;
+  completed_at: string;
+  version: string;
+}
+
 const PREDEFINED_TAGS = ['belief-shift', 'clarity', 'freedom', 'trigger'];
 
 export async function initializeDatabase(db: SQLiteDatabase): Promise<void> {
@@ -33,6 +42,15 @@ export async function initializeDatabase(db: SQLiteDatabase): Promise<void> {
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL UNIQUE,
       lastUsed INTEGER NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS loop_maps (
+      id TEXT PRIMARY KEY,
+      top_triggers TEXT NOT NULL,
+      perceived_benefit TEXT NOT NULL,
+      later_outcome TEXT NOT NULL,
+      completed_at TEXT NOT NULL,
+      version TEXT DEFAULT '1'
     );
 
     CREATE INDEX IF NOT EXISTS idx_entries_timestamp ON insight_entries(timestamp DESC);
@@ -132,4 +150,36 @@ export async function getEntryCount(db: SQLiteDatabase): Promise<number> {
     'SELECT COUNT(*) as count FROM insight_entries'
   );
   return result?.count ?? 0;
+}
+
+export async function getLatestLoopMap(db: SQLiteDatabase): Promise<LoopMap | null> {
+  const result = await db.getFirstAsync<LoopMap>(
+    'SELECT * FROM loop_maps ORDER BY completed_at DESC LIMIT 1'
+  );
+  return result ?? null;
+}
+
+export async function saveLoopMap(
+  db: SQLiteDatabase,
+  triggers: string[],
+  benefit: string,
+  outcome: string,
+): Promise<LoopMap> {
+  const id = `loopmap-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const completedAt = new Date().toISOString();
+  const triggersJson = JSON.stringify(triggers);
+
+  await db.runAsync(
+    'INSERT INTO loop_maps (id, top_triggers, perceived_benefit, later_outcome, completed_at, version) VALUES (?, ?, ?, ?, ?, ?)',
+    [id, triggersJson, benefit, outcome, completedAt, '1']
+  );
+
+  return {
+    id,
+    top_triggers: triggersJson,
+    perceived_benefit: benefit,
+    later_outcome: outcome,
+    completed_at: completedAt,
+    version: '1',
+  };
 }

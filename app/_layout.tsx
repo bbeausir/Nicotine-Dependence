@@ -17,6 +17,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/components/useColorScheme';
 import { AssessmentProvider } from '@/providers/AssessmentProvider';
 import { AuthProvider } from '@/providers/AuthProvider';
+import { Module1Provider } from '@/providers/Module1Provider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { getNavigationTheme } from '@/theme/navigationTheme';
 
@@ -62,7 +63,9 @@ function RootLayoutNav() {
         <ThemeProvider>
           <AuthProvider>
             <AssessmentProvider>
-              <NavigationWrapper />
+              <Module1Provider>
+                <NavigationWrapper />
+              </Module1Provider>
             </AssessmentProvider>
           </AuthProvider>
         </ThemeProvider>
@@ -71,14 +74,17 @@ function RootLayoutNav() {
   }
 
   const { SQLiteProvider } = require('expo-sqlite');
+  const { initializeDatabase } = require('@/lib/database/schema');
 
   return (
     <SafeAreaProvider>
-      <SQLiteProvider databaseName="nicotine.db">
+      <SQLiteProvider databaseName="nicotine.db" onInit={initializeDatabase}>
         <ThemeProvider>
           <AuthProvider>
             <AssessmentProvider>
-              <NavigationWrapper />
+              <Module1Provider>
+                <NavigationWrapper />
+              </Module1Provider>
             </AssessmentProvider>
           </AuthProvider>
         </ThemeProvider>

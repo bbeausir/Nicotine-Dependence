@@ -27,10 +27,14 @@ export type ShiftResource = ResourceCardBase & {
   illustration?: ResourceIllustrationId;
 };
 
-export type DeepenModuleResource = {
+/**
+ * Static metadata for a Module card. Live progress (lessonsCompleted, completed)
+ * is computed at render time by the Resources screen — see useModule1Status.
+ */
+export type ModuleResource = {
+  id: 'module1' | 'module2';
   title: string;
   description: string;
-  lessonsCompleted: number;
   totalLessons: number;
   href: Href;
   illustration: ResourceIllustrationId;
@@ -81,12 +85,22 @@ export const resourcesContent = {
       illustration: undefined,
     },
   ] as const satisfies ReadonlyArray<ShiftResource>,
-  deepen: {
-    title: 'Module 2: The Illusion of Relief',
-    description: 'Why nicotine seems to help—and why it never actually does.',
-    lessonsCompleted: 2,
-    totalLessons: 6,
-    href: '/course-module',
-    illustration: 'illusionOfRelief',
-  } as const satisfies DeepenModuleResource,
+  modules: [
+    {
+      id: 'module1',
+      title: 'Module 1: See the Loop Clearly',
+      description: 'Understand why the urge keeps coming back.',
+      totalLessons: 1,
+      href: '/module-1',
+      illustration: 'insightsLibrary',
+    },
+    {
+      id: 'module2',
+      title: 'Module 2: The Illusion of Relief',
+      description: 'Why nicotine seems to help—and why it never actually does.',
+      totalLessons: 6,
+      href: '/course-module',
+      illustration: 'illusionOfRelief',
+    },
+  ] as const satisfies ReadonlyArray<ModuleResource>,
 } as const;

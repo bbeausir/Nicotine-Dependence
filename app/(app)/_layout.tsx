@@ -39,6 +39,7 @@ export default function AppGroupLayout() {
         ),
       }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="module-1" options={{ title: 'See the Loop Clearly' }} />
       <Stack.Screen name="settings/profile" options={{ headerShown: false }} />
       <Stack.Screen name="settings/notifications" options={{ title: 'Notifications' }} />
       <Stack.Screen name="settings/privacy" options={{ title: 'Privacy & Data' }} />

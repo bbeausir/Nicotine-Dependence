@@ -1,7 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Platform, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
-import { useEffect } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { Screen } from '@/components/ui/Screen';
@@ -11,17 +10,7 @@ import { resourcesContent } from '@/features/resources/content';
 import { ResourceIllustration } from '@/features/resources/illustrations';
 import type { ColorSchemeName } from '@/theme/tokens';
 import { getTokens } from '@/theme/tokens';
-
-// ─── database bootstrap (mirrors existing pattern) ───────────────────────────
-let useSQLiteContext: any;
-let initializeDatabase: any;
-
-if (Platform.OS !== 'web') {
-  const sqliteModule = require('expo-sqlite');
-  useSQLiteContext = sqliteModule.useSQLiteContext;
-  const schemaModule = require('@/lib/database/schema');
-  initializeDatabase = schemaModule.initializeDatabase;
-}
+import { useModule1Status } from '@/features/module-1/hooks/useModule1Status';
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 function alpha(hex: string, opacity: number): string {
@@ -246,13 +235,7 @@ export default function ResourcesTabScreen() {
   const scheme = useColorScheme();
   const t = getTokens(scheme);
   const isNarrow = width < 390;
-
-  const db = Platform.OS !== 'web' ? useSQLiteContext?.() : null;
-  useEffect(() => {
-    if (db && initializeDatabase) {
-      initializeDatabase(db).catch((err: any) => console.error('db init failed:', err));
-    }
-  }, [db]);
+  const { isCompleted: module1Completed } = useModule1Status();
 
   const ua = t.color.sectionAccent.understand;
   const sa = t.color.sectionAccent.shift;
@@ -317,19 +300,41 @@ export default function ResourcesTabScreen() {
         </View>
       </View>
 
-      {/* ── Go Deeper ─────────────────────────────────────── */}
+      {/* ── Go Deeper (Modules) ─────────────────────────── */}
       <View style={styles.section}>
         <SectionHeader iconComponent={<Ionicons name="book-outline" size={20} color={da} />} title="Go Deeper" scheme={scheme} />
-        <ModuleCard
-          title={resourcesContent.deepen.title}
-          description={resourcesContent.deepen.description}
-          lessonsCompleted={resourcesContent.deepen.lessonsCompleted}
-          totalLessons={resourcesContent.deepen.totalLessons}
-          illustration={resourcesContent.deepen.illustration}
-          accent={da}
-          scheme={scheme}
-          onPress={() => router.push(resourcesContent.deepen.href)}
-        />
+        <View style={styles.modulesContainer}>
+          {resourcesContent.modules.map((module) => {
+            const isCompleted = module.id === 'module1' ? module1Completed : false;
+            // Module 2 is locked until Module 1 is done. Module 1 always shows
+            // 1/1 lessons once completed; otherwise 0/N.
+            const lessonsCompleted =
+              module.id === 'module1' ? (isCompleted ? 1 : 0) : 0;
+
+            return (
+              <View key={module.id} style={styles.moduleItem}>
+                <ModuleCard
+                  title={module.title}
+                  description={module.description}
+                  lessonsCompleted={lessonsCompleted}
+                  totalLessons={module.totalLessons}
+                  illustration={module.illustration}
+                  accent={da}
+                  scheme={scheme}
+                  onPress={() => router.push(module.href)}
+                />
+                {isCompleted && (
+                  <View style={[styles.completedBadge, { backgroundColor: da }]}>
+                    <Ionicons name="checkmark" size={16} color="#ffffff" />
+                    <Text style={[styles.completedText, { fontFamily: t.typeface.uiMedium }]}>
+                      Completed
+                    </Text>
+                  </View>
+                )}
+              </View>
+            );
+          })}
+        </View>
       </View>
     </Screen>
   );
@@ -533,5 +538,29 @@ const styles = StyleSheet.create({
     lineHeight: 14,
     flex: 1,
     marginRight: 8,
+  },
+
+  // modules container
+  modulesContainer: {
+    gap: 12,
+  },
+  moduleItem: {
+    position: 'relative',
+  },
+  completedBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    gap: 4,
+  },
+  completedText: {
+    fontSize: 11,
+    lineHeight: 14,
+    color: '#ffffff',
   },
 });
