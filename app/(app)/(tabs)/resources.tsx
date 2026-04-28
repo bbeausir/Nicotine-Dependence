@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { Screen } from '@/components/ui/Screen';
@@ -176,6 +176,7 @@ type ModuleCardProps = {
   description: string;
   lessonsCompleted: number;
   totalLessons: number;
+  isCompleted: boolean;
   illustration: ResourceIllustrationId;
   accent: string;
   scheme: ColorSchemeName;
@@ -187,6 +188,7 @@ function ModuleCard({
   description,
   lessonsCompleted,
   totalLessons,
+  isCompleted,
   illustration,
   accent,
   scheme,
@@ -205,9 +207,19 @@ function ModuleCard({
       </View>
       {/* Content */}
       <View style={styles.moduleContent}>
-        <Text style={[styles.progressLabel, { color: accent, fontFamily: t.typeface.uiMedium }]}>
-          COURSE PROGRESS
-        </Text>
+        <View style={styles.moduleProgressHeader}>
+          <Text style={[styles.progressLabel, { color: accent, fontFamily: t.typeface.uiMedium }]}>
+            COURSE PROGRESS
+          </Text>
+          {isCompleted && (
+            <View style={[styles.completedBadge, { backgroundColor: accent }]}>
+              <Ionicons name="checkmark" size={14} color="#ffffff" />
+              <Text style={[styles.completedText, { fontFamily: t.typeface.uiMedium }]}>
+                Completed
+              </Text>
+            </View>
+          )}
+        </View>
         <Text style={[styles.moduleTitle, { color: t.color.textPrimary, fontFamily: t.typeface.uiSemibold }]}>
           {title}
         </Text>
@@ -234,7 +246,9 @@ export default function ResourcesTabScreen() {
   const { width } = useWindowDimensions();
   const scheme = useColorScheme();
   const t = getTokens(scheme);
-  const isNarrow = width < 390;
+  const understandCardWidth = Math.min(240, width - 64);
+  const shiftCardWidth = Math.min(176, width - 64);
+  const moduleCardWidth = Math.min(380, width - 40);
   const { isCompleted: module1Completed } = useModule1Status();
 
   const ua = t.color.sectionAccent.understand;
@@ -261,49 +275,60 @@ export default function ResourcesTabScreen() {
       {/* ── Understand ────────────────────────────────────── */}
       <View style={styles.section}>
         <SectionHeader iconComponent={<Ionicons name="hardware-chip-outline" size={20} color={ua} />} title="Understand" scheme={scheme} />
-        <View style={[styles.twoColRow, isNarrow && styles.stackedRow]}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.understandContainer}>
           {resourcesContent.understand.map((card) => (
-            <UnderstandCard
-              key={card.href}
-              icon={card.icon}
-              title={card.title}
-              description={card.description}
-              cta={card.cta}
-              illustration={card.illustration}
-              accent={ua}
-              cardBg={understandCardBg}
-              scheme={scheme}
-              onPress={() => router.push(card.href)}
-            />
+            <View key={card.href} style={{ width: understandCardWidth }}>
+              <UnderstandCard
+                icon={card.icon}
+                title={card.title}
+                description={card.description}
+                cta={card.cta}
+                illustration={card.illustration}
+                accent={ua}
+                cardBg={understandCardBg}
+                scheme={scheme}
+                onPress={() => router.push(card.href)}
+              />
+            </View>
           ))}
-        </View>
+        </ScrollView>
       </View>
 
       {/* ── Shift your State ──────────────────────────────── */}
       <View style={styles.section}>
         <SectionHeader iconComponent={<WavesIcon color={sa} size={20} />} title="Shift your State" scheme={scheme} />
-        <View style={[styles.threeColRow, isNarrow && styles.stackedRow]}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.shiftContainer}>
           {resourcesContent.shift.map((card) => (
-            <ShiftCard
-              key={card.href}
-              icon={card.icon}
-              title={card.title}
-              description={card.description}
-              duration={card.duration}
-              illustration={card.illustration}
-              accent={sa}
-              cardBg={shiftCardBg}
-              scheme={scheme}
-              onPress={() => router.push(card.href)}
-            />
+            <View key={card.href} style={{ width: shiftCardWidth }}>
+              <ShiftCard
+                icon={card.icon}
+                title={card.title}
+                description={card.description}
+                duration={card.duration}
+                illustration={card.illustration}
+                accent={sa}
+                cardBg={shiftCardBg}
+                scheme={scheme}
+                onPress={() => router.push(card.href)}
+              />
+            </View>
           ))}
-        </View>
+        </ScrollView>
       </View>
 
       {/* ── Go Deeper (Modules) ─────────────────────────── */}
       <View style={styles.section}>
         <SectionHeader iconComponent={<Ionicons name="book-outline" size={20} color={da} />} title="Go Deeper" scheme={scheme} />
-        <View style={styles.modulesContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.modulesContainer}>
           {resourcesContent.modules.map((module) => {
             const isCompleted = module.id === 'module1' ? module1Completed : false;
             // Module 2 is locked until Module 1 is done. Module 1 always shows
@@ -312,29 +337,22 @@ export default function ResourcesTabScreen() {
               module.id === 'module1' ? (isCompleted ? 1 : 0) : 0;
 
             return (
-              <View key={module.id} style={styles.moduleItem}>
+              <View key={module.id} style={[styles.moduleItem, { width: moduleCardWidth }]}>
                 <ModuleCard
                   title={module.title}
                   description={module.description}
                   lessonsCompleted={lessonsCompleted}
                   totalLessons={module.totalLessons}
+                  isCompleted={isCompleted}
                   illustration={module.illustration}
                   accent={da}
                   scheme={scheme}
                   onPress={() => router.push(module.href)}
                 />
-                {isCompleted && (
-                  <View style={[styles.completedBadge, { backgroundColor: da }]}>
-                    <Ionicons name="checkmark" size={16} color="#ffffff" />
-                    <Text style={[styles.completedText, { fontFamily: t.typeface.uiMedium }]}>
-                      Completed
-                    </Text>
-                  </View>
-                )}
               </View>
             );
           })}
-        </View>
+        </ScrollView>
       </View>
     </Screen>
   );
@@ -402,17 +420,17 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 
-  // understand cards (2-column)
-  twoColRow: {
+  // understand cards
+  understandContainer: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 8,
   },
   understandCard: {
     flex: 1,
     borderWidth: 1,
     borderRadius: 16,
     overflow: 'hidden',
-    minHeight: 228,
+    height: 214,
   },
   understandThumbnail: {
     width: '100%',
@@ -422,12 +440,12 @@ const styles = StyleSheet.create({
   understandIconArea: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 28,
+    height: 74,
   },
   understandBody: {
-    padding: 14,
-    flexGrow: 1,
-    gap: 6,
+    padding: 12,
+    flex: 1,
+    gap: 4,
   },
   cardTitle: {
     fontSize: 14,
@@ -438,13 +456,10 @@ const styles = StyleSheet.create({
     lineHeight: 17,
   },
 
-  // shift cards (3-column)
-  threeColRow: {
+  // shift cards
+  shiftContainer: {
     flexDirection: 'row',
     gap: 10,
-  },
-  stackedRow: {
-    flexDirection: 'column',
   },
   shiftCard: {
     flex: 1,
@@ -452,7 +467,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 12,
     gap: 8,
-    minHeight: 188,
+    height: 188,
   },
   shiftThumbnail: {
     width: 52,
@@ -493,7 +508,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 16,
     overflow: 'hidden',
-    minHeight: 140,
+    height: 204,
   },
   moduleThumbnail: {
     width: 110,
@@ -504,10 +519,18 @@ const styles = StyleSheet.create({
     padding: 14,
     gap: 5,
   },
+  moduleProgressHeader: {
+    minHeight: 28,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
   progressLabel: {
     fontSize: 10,
     lineHeight: 13,
     letterSpacing: 0.6,
+    flexShrink: 1,
   },
   moduleTitle: {
     fontSize: 15,
@@ -531,7 +554,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 2,
+    marginTop: 'auto' as any,
+    paddingTop: 4,
   },
   lessonsText: {
     fontSize: 11,
@@ -542,15 +566,13 @@ const styles = StyleSheet.create({
 
   // modules container
   modulesContainer: {
+    flexDirection: 'row',
     gap: 12,
   },
   moduleItem: {
     position: 'relative',
   },
   completedBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,
